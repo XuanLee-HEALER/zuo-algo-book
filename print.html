@@ -154,6 +154,10 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="随便聊聊"><a class="header" href="#随便聊聊">随便聊聊</a></h1>
+<p>⭐️⭐️⭐️<a href="https://space.bilibili.com/8888480"><strong>左神b站主页，推荐关注</strong></a>⭐️⭐️⭐️</p>
+<p>这本书记录我学习左神算法课过程中的笔记和一些想法，章节基本按照B站课程的顺序排列。之前的笔记在项目的README里面越来越长，查看也不太方便，就想整理为这种电子书的结构。</p>
+<p>左神原repo的算法实现都是Java写的，因为我现在的工作主力语言不是rust，但是我又十分喜欢这门语言，所以我的实现基本上都用rust来写（除了链表相关题目和一些OJ不支持rust的题目使用了C和C++）。不过编程语言只是实现算法的一种手段，用什么都可以，如果追求性能推荐使用静态语言（C/C++），其他情况只要顺手即可。算法的核心永远是解决问题的思路！</p>
+<p>虽然我觉得现在自己才接触算法，乃至算法竞赛相关的内容太晚了，但是从追求进入大厂的目标到现在有些乐在其中的过程，我还是很庆幸接触了这门课程。希望能在之后的工作和学习中，永远不丢掉对算法的学习热情。</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="二进制"><a class="header" href="#二进制">二进制</a></h1>
 <h2 id="二进制表示数字"><a class="header" href="#二进制表示数字">二进制表示数字</a></h2>
 <p>二进制数每一位（bit）可以表示<code>0</code>和<code>1</code>，计算一个二进制数的十进制表示就是从低位到高位累加<code>2^i</code>得到结果。比如<code>1001</code>，计算十进制数为<code>1 * 2^0 + 0 * 2^1 + 0 * 2^2 + 1 * 2^3 = 9</code></p>
@@ -237,6 +241,36 @@ for i in (0..32).rev() {
     }
 }
 <span class="boring">}</span></code></pre></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="三种简单排序"><a class="header" href="#三种简单排序">三种简单排序</a></h1>
+<p>⚠️注意边界条件，数组元素如果是<code>0</code>或<code>1</code>个，那么本身有序无需进入算法步骤</p>
+<h2 id="选择排序"><a class="header" href="#选择排序">选择排序</a></h2>
+<p>一句话总结：<code>i=0</code>，将<code>[i..N]</code>位置上的最小值找到，然后与<code>i</code>位置的数交换位置，直到<code>i==N-1</code></p>
+<p>时间复杂度<code>O(N^2)</code></p>
+<h2 id="冒泡排序"><a class="header" href="#冒泡排序">冒泡排序</a></h2>
+<p>一句话总结：在<code>[0..=N-1]</code>位置范围内，通过两两比较将最大值移到<code>N-1</code>位置上，然后缩短范围<code>[0..=N-2]</code>继续，直到范围为<code>[0..1]</code></p>
+<p>时间复杂度<code>O(N^2)</code></p>
+<h2 id="插入排序"><a class="header" href="#插入排序">插入排序</a></h2>
+<p>一句话总结：每次都保证前<code>i</code>位有序，将<code>i+1</code>位认为无序，然后和前<code>i</code>位倒序比较，如果无序则交换顺序</p>
+<pre><code class="language-rust ignore">fn insert_sort_2(arr: &amp;mut [i32]) {
+    let n = arr.len();
+    if n &gt; 1 {
+        for i in 0..n - 1 {
+            let mut j = i + 1;
+            while j &gt; 0 {
+                if arr[j] &lt;= arr[j - 1] {
+                    arr.swap(j, j - 1);
+                    j -= 1;
+                } else {
+                    break;
+                }
+            }
+        }
+    }
+}</code></pre>
+<ul>
+<li>最好情况（数列有序）时间复杂度为<code>O(N)</code></li>
+<li>在数列元素个数较少（几十个）使用插入排序表现也比快排、归并排序好，因为它很简单、小数据集的缓存性能好</li>
+</ul>
 
                     </main>
 
