@@ -8,7 +8,7 @@
 
         <!-- Custom HTML head -->
 
-        <meta name="description" content="">
+        <meta name="description" content="左神算法课程笔记">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
 
@@ -187,7 +187,7 @@
 <p>位运算不会应用短路计算，逻辑计算会应用短路计算，短路计算即当前面某一步计算结果可以代表整个表达式结果则不再计算后续的表达式结果</p>
 <h3 id=""><a class="header" href="#"><code>|</code></a></h3>
 <p>当存在一个位为<code>1</code>时，计算结果为<code>1</code>，否则为<code>0</code></p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>println!("1 | 1 = {}", 1|1);
 println!("1 | 0 = {}", 1|0);
@@ -196,7 +196,7 @@ println!("0 | 0 = {}", 0|0);
 <span class="boring">}</span></code></pre></pre>
 <h3 id="-1"><a class="header" href="#-1"><code>&amp;</code></a></h3>
 <p>当存在至少一个位为<code>0</code>时，计算结果为<code>0</code>，否则为<code>1</code></p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>println!("1 &amp; 1 = {}", 1&amp;1);
 println!("1 &amp; 0 = {}", 1&amp;0);
@@ -205,7 +205,7 @@ println!("0 &amp; 0 = {}", 0&amp;0);
 <span class="boring">}</span></code></pre></pre>
 <h3 id="-2"><a class="header" href="#-2"><code>^</code></a></h3>
 <p>当两个位相同时为<code>0</code>，否则为<code>1</code></p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>println!("1 ^ 1 = {}", 1^1);
 println!("1 ^ 0 = {}", 1^0);
@@ -217,14 +217,14 @@ println!("0 ^ 0 = {}", 0^0);
 <p>对于<strong>非负数</strong>，左移n位等同于<code>*2^(n)</code>，右移n位等同于<code>/2^(n)</code></p>
 <h3 id="取反"><a class="header" href="#取反">取反</a></h3>
 <p><code>~</code>是取反符号，每个数的获取它的正反值都等于对它取反再加1</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>println!("-7 = {}", !7+1);
 println!("7 = {}", !(-7)+1);
 <span class="boring">}</span></code></pre></pre>
 <h2 id="打印二进制数"><a class="header" href="#打印二进制数">打印二进制数</a></h2>
 <p>要打印二进制的某一位，可以将其它位与<code>0</code>做<code>&amp;</code>操作，要打印的位与<code>1</code>做<code>&amp;</code>操作，如果剩下的数不为0，那么打印<code>1</code>，否则打印<code>0</code></p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let num: i32 = -169;
 for i in (0..32).rev() {

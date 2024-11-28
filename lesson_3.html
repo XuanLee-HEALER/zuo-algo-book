@@ -3,8 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Page not found - Zuo Algorithm Book</title>
-        <base href="/">
+        <title>对数器 - Zuo Algorithm Book</title>
 
 
         <!-- Custom HTML head -->
@@ -153,14 +152,29 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="document-not-found-404"><a class="header" href="#document-not-found-404">Document not found (404)</a></h1>
-<p>This URL is invalid, sorry. Please use the navigation bar or search to continue.</p>
+                        <h1 id="对数器"><a class="header" href="#对数器">对数器</a></h1>
+<p>对数器是一种验证算法的方法，它的实现步骤大概分为</p>
+<ol>
+<li>分析要解决的问题<code>A</code></li>
+<li>实现一个不考虑时间复杂度的暴力解法<code>S1</code>，最简单的思路基本都是正确的，一定要保证这里算法的正确性</li>
+<li>实现几个考虑时间复杂度的优雅解法<code>S2</code>、<code>S3</code>等</li>
+<li>开始创建测试用例，即利用随机数生成的方法生成<strong>符合题目要求的</strong>测试数据</li>
+<li>使用生成的测试数据对几个解法进行测试，小数据量测试</li>
+<li>如果小数据量没有问题，那么逐渐增加数据，直到暴力解法达到无法计算的程度，如果其它更好的解法在短时间内还可以计算出答案，则<em>基本</em>可以确定更好的解法思路是正确的</li>
+<li>如果在测试过程中出现了问题，那么减少数据量，通过打印中间变量/debug的方法，开始查找错误，这个过程中还可以打印原始测试数据，对比不同方法的结果来判断</li>
+</ol>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="lesson_2.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
 
+                            <a rel="next prefetch" href="lesson_4.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
 
                         <div style="clear: both"></div>
                     </nav>
@@ -168,7 +182,13 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="lesson_2.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
 
+                    <a rel="next prefetch" href="lesson_4.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
             </nav>
 
         </div>
