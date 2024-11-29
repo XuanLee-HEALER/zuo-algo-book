@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>二分搜索 - Zuo Algorithm Book</title>
+        <title>算法和数据结构分类 - Zuo Algorithm Book</title>
 
 
         <!-- Custom HTML head -->
@@ -152,65 +152,27 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="二分搜索"><a class="header" href="#二分搜索">二分搜索</a></h1>
-<h2 id="有序数列"><a class="header" href="#有序数列">有序数列</a></h2>
-<p>问题描述：在有序数列中找到一个指定数字，如果存在返回它的索引，否则返回<code>-1</code></p>
-<p>解法：二分搜索模版，如果中点不是答案，大于则往左找，小于则往右找，直到终点等于指定数字返回答案，或者左索引大于右索引返回<code>-1</code></p>
-<pre><code class="language-rust ignore">fn binary_search(arr: &amp;[i32], n: i32) -&gt; bool {
-    let len = arr.len();
-    if len == 0 {
-        return false;
-    }
-
-    let mut beg = 0;
-    let mut end = len - 1;
-    while beg &lt;= end {
-        let mid = beg + ((end - beg) &gt;&gt; 1);
-        match arr[mid].cmp(&amp;n) {
-            std::cmp::Ordering::Equal =&gt; return true,
-            std::cmp::Ordering::Less =&gt; {
-                beg = mid + 1;
-            }
-            std::cmp::Ordering::Greater =&gt; {
-                // usize如果为负数在release编译下会wrapping-sub，导致越界
-                if mid &gt; 0 {
-                    end = mid - 1;
-                } else {
-                    break;
-                }
-            }
-        }
-    }
-
-    false
-}</code></pre>
-<hr />
-<p>问题描述：找到一个大于等于数字<code>N</code>的<strong>最靠左</strong>的数字</p>
-<p>解法：如果中点大于等于<code>N</code>，那么<strong>记录答案</strong>往左找，如果小于<code>N</code>往右找，当查找完毕后返回答案</p>
-<hr />
-<p>问题描述：找到一个小于等于数字<code>N</code>的<strong>最靠右</strong>的数字</p>
-<p>解法：如果中点小于等于<code>N</code>，那么<strong>记录答案</strong>往右找，如果大于<code>N</code>往左找，当查找完毕后返回答案</p>
-<h3 id="计算中点索引位置的方法"><a class="header" href="#计算中点索引位置的方法">计算中点索引位置的方法</a></h3>
-<p>一个长度为N的数列的开头索引总是<code>0</code>，最后一个元素索引是<code>N-1</code>，那么中点是<code>(0+(N-1))/2</code>，另外一种计算中点的方式是<code>0+((N-1-0)&gt;&gt;1)</code>，这样写的作用是防止两个索引位置直接相加之后会超过索引值数据类型的最大值造成溢出</p>
-<h2 id="无序数列"><a class="header" href="#无序数列">无序数列</a></h2>
-<h3 id="峰值问题"><a class="header" href="#峰值问题">峰值问题</a></h3>
-<p>问题描述：在一个数列中，峰值的含义是，在位置<code>i</code>上，如果它的值大于左右两边的值，且<strong>相邻数不允许相同</strong>，认为在数列左端和右端的数的值为最小。找到数列中任意一个峰值的位置，如果没有则返回<code>-1</code></p>
-<p>解法：按照题中的指示，先判断第一个数和最后一个数是否为峰值，如果两个数都不是峰值，那么可以判断峰值一定在中间（这说明从两端开始数值都是上升趋势，且相邻数不允许相同，那么在中间一定会有一个峰值），此时认为二分搜索的起点为<code>1</code>，终点为<code>N-2</code>，判断中点是否为峰值，如果不是，如果小于左边的数，那么往左继续查找，否则往右继续查找</p>
-<p>启发：如果可以确定问题范围缩小的规律，就可以使用“二分”解决同类问题</p>
-<h2 id="二分搜索的时间复杂度"><a class="header" href="#二分搜索的时间复杂度">二分搜索的时间复杂度</a></h2>
-<p>二分搜索的时间复杂度是<code>O(logN)</code>，N表示数列的长度，因为每一次循环会将搜索范围缩小一半，所以问题的总规模就是2的搜索次数的次方，例如一个长度为<code>i32::MAX</code>的数列，它的长度为<code>2^31-1</code>，所以最慢经过31次搜索就可以解决问题</p>
+                        <h1 id="算法和数据结构分类"><a class="header" href="#算法和数据结构分类">算法和数据结构分类</a></h1>
+<h2 id="算法"><a class="header" href="#算法">算法</a></h2>
+<ul>
+<li>硬计算类算法：精确求解，最终结果一定是问题的答案，例如二分搜索</li>
+<li>软计算类算法：一定条件下的最优解，注重逼近解决问题的答案，例如机器学习算法</li>
+</ul>
+<h2 id="数据结构"><a class="header" href="#数据结构">数据结构</a></h2>
+<ul>
+<li>（物理）连续结构：在（虚拟）内存中是连续存储的，只需要知道首地址和偏移量就能直接查找指定位置元素。例如数组、scalar类型的值</li>
+<li>（物理）跳转结构：在（虚拟）内存中是不连续存储的，需要保存不同节点的地址才能查找。例如链表、树、图</li>
+</ul>
+<p>任何一种数据结构都是通过这两种结构组合起来构成的</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="lesson_3.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="lesson_5.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="lesson_5.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                                <i class="fa fa-angle-right"></i>
-                            </a>
 
                         <div style="clear: both"></div>
                     </nav>
@@ -218,13 +180,10 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="lesson_3.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="lesson_5.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="lesson_5.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                        <i class="fa fa-angle-right"></i>
-                    </a>
             </nav>
 
         </div>

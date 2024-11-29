@@ -8,7 +8,7 @@ class MDBookSidebarScrollbox extends HTMLElement {
         super();
     }
     connectedCallback() {
-        this.innerHTML = '<ol class="chapter"><li class="chapter-item expanded affix "><a href="overview.html">随便聊聊</a></li><li class="chapter-item expanded "><a href="lesson_1.html"><strong aria-hidden="true">1.</strong> 二进制</a></li><li class="chapter-item expanded "><a href="lesson_2.html"><strong aria-hidden="true">2.</strong> 三种简单排序</a></li><li class="chapter-item expanded "><a href="lesson_3.html"><strong aria-hidden="true">3.</strong> 对数器</a></li><li class="chapter-item expanded "><a href="lesson_4.html"><strong aria-hidden="true">4.</strong> 二分搜索</a></li></ol>';
+        this.innerHTML = '<ol class="chapter"><li class="chapter-item expanded affix "><a href="overview.html">随便聊聊</a></li><li class="chapter-item expanded "><a href="lesson_1.html"><strong aria-hidden="true">1.</strong> 二进制</a></li><li class="chapter-item expanded "><a href="lesson_2.html"><strong aria-hidden="true">2.</strong> 三种简单排序</a></li><li class="chapter-item expanded "><a href="lesson_3.html"><strong aria-hidden="true">3.</strong> 对数器</a></li><li class="chapter-item expanded "><a href="lesson_4.html"><strong aria-hidden="true">4.</strong> 二分搜索</a></li><li class="chapter-item expanded "><a href="lesson_5.html"><strong aria-hidden="true">5.</strong> 时间复杂度和空间复杂度</a></li><li class="chapter-item expanded "><a href="lesson_6.html"><strong aria-hidden="true">6.</strong> 算法和数据结构分类</a></li></ol>';
         // Set the current, active page, and reveal it if it's hidden
         let current_page = document.location.href.toString();
         if (current_page.endsWith("/")) {
