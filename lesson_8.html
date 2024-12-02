@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>二进制 - Zuo Algorithm Book</title>
+        <title>二叉树及其三种序的遍历 - Zuo Algorithm Book</title>
 
 
         <!-- Custom HTML head -->
@@ -152,99 +152,77 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="二进制"><a class="header" href="#二进制">二进制</a></h1>
-<h2 id="二进制表示数字"><a class="header" href="#二进制表示数字">二进制表示数字</a></h2>
-<p>二进制数每一位（bit）可以表示<code>0</code>和<code>1</code>，计算一个二进制数的十进制表示就是从低位到高位累加<code>2^i</code>得到结果。比如<code>1001</code>，计算十进制数为<code>1 * 2^0 + 0 * 2^1 + 0 * 2^2 + 1 * 2^3 = 9</code></p>
-<h2 id="二进制表示非负数和负数"><a class="header" href="#二进制表示非负数和负数">二进制表示非负数和负数</a></h2>
+                        <h1 id="二叉树及其三种序的遍历"><a class="header" href="#二叉树及其三种序的遍历">二叉树及其三种序的遍历</a></h1>
+<p>二叉树的简单定义：任意节点只有左右两个节点的树</p>
+<p>对于二叉树的三种序的遍历，就是在遍历时<strong>根节点所处的遍历位置</strong>，具体见下面的递归解析</p>
 <ul>
-<li>一个n位的二进制数表示的无符号数字范围是<code>2^n</code>个</li>
-<li>一个n位的二进制数表示的有符号数字范围是<code>-2^(n-1)~2^(n-1)-1</code>。每个数字的首位表示符号，<code>0</code>为正、<code>1</code>为负</li>
+<li>先序遍历：中-&gt;左-&gt;右</li>
+<li>中序遍历：左-&gt;中-&gt;右</li>
+<li>后序遍历：左-&gt;右-&gt;中</li>
 </ul>
-<h3 id="计算一个正数对应的负数的二进制表示的负数"><a class="header" href="#计算一个正数对应的负数的二进制表示的负数">计算一个正数对应的负数的二进制表示的负数</a></h3>
-<p>将所有位减1再取反。例如<code>5</code>的二进制表示<code>0101</code>，它的负数计算过程为</p>
-<ol>
-<li><code>0101 - 1 = 0100</code></li>
-<li><code>!0100 = 1011</code></li>
-</ol>
-<p><code>1011</code>就是<code>-5</code>的二进制表示，相反，根据一个二进制数来判断有符号数的值，则将整个数取反再加1</p>
-<ol>
-<li><code>!1011 = 0100</code></li>
-<li><code>0100 + 1 = 0101</code></li>
-</ol>
-<h2 id="正负数的二进制表示方式设计原因"><a class="header" href="#正负数的二进制表示方式设计原因">正负数的二进制表示方式设计原因</a></h2>
-<p>这种表示方式可以在负数和非负数以任何出现顺序做加法时不需要加分支判断即可进行，例如<code>-5 + 2</code></p>
-<ol>
-<li><code>1011 + 0010 = 1101</code></li>
-<li><code>!1101 = 0010</code></li>
-<li><code>0010 + 1 = 0011</code></li>
-</ol>
-<p><code>0011</code>是3，即<code>1101</code>表示-3，所以计算结果正确</p>
-<blockquote>
-<p><strong>计算机不处理数字计算的溢出情况，需要程序员自己保证</strong></p>
-</blockquote>
-<p>由于没有分支判断，加法的计算速度很快，计算机中的其他基本运算可以认为是通过加法实现的，所以其它的计算<code>-</code>、<code>*</code>、<code>/</code>的计算性能也会提高</p>
-<h2 id="位运算"><a class="header" href="#位运算">位运算</a></h2>
-<p>位运算不会应用短路计算，逻辑计算会应用短路计算，短路计算即当前面某一步计算结果可以代表整个表达式结果则不再计算后续的表达式结果</p>
-<h3 id=""><a class="header" href="#"><code>|</code></a></h3>
-<p>当存在一个位为<code>1</code>时，计算结果为<code>1</code>，否则为<code>0</code></p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>println!("1 | 1 = {}", 1|1);
-println!("1 | 0 = {}", 1|0);
-println!("0 | 1 = {}", 0|1);
-println!("0 | 0 = {}", 0|0);
-<span class="boring">}</span></code></pre></pre>
-<h3 id="-1"><a class="header" href="#-1"><code>&amp;</code></a></h3>
-<p>当存在至少一个位为<code>0</code>时，计算结果为<code>0</code>，否则为<code>1</code></p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>println!("1 &amp; 1 = {}", 1&amp;1);
-println!("1 &amp; 0 = {}", 1&amp;0);
-println!("0 &amp; 1 = {}", 0&amp;1);
-println!("0 &amp; 0 = {}", 0&amp;0);
-<span class="boring">}</span></code></pre></pre>
-<h3 id="-2"><a class="header" href="#-2"><code>^</code></a></h3>
-<p>当两个位相同时为<code>0</code>，否则为<code>1</code></p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>println!("1 ^ 1 = {}", 1^1);
-println!("1 ^ 0 = {}", 1^0);
-println!("0 ^ 1 = {}", 0^1);
-println!("0 ^ 0 = {}", 0^0);
-<span class="boring">}</span></code></pre></pre>
-<h3 id="-3"><a class="header" href="#-3"><code>&lt;&lt;</code>、<code>&gt;&gt;</code>、<code>&lt;&lt;&lt;</code>、<code>&gt;&gt;&gt;</code></a></h3>
-<p>带符号左移/右移，无符号左移/右移（即右移用0补位）</p>
-<p>对于<strong>非负数</strong>，左移n位等同于<code>*2^(n)</code>，右移n位等同于<code>/2^(n)</code></p>
-<h3 id="取反"><a class="header" href="#取反">取反</a></h3>
-<p><code>~</code>是取反符号，每个数的获取它的正反值都等于对它取反再加1</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>println!("-7 = {}", !7+1);
-println!("7 = {}", !(-7)+1);
-<span class="boring">}</span></code></pre></pre>
-<h2 id="打印二进制数"><a class="header" href="#打印二进制数">打印二进制数</a></h2>
-<p>要打印二进制的某一位，可以将其它位与<code>0</code>做<code>&amp;</code>操作，要打印的位与<code>1</code>做<code>&amp;</code>操作，如果剩下的数不为0，那么打印<code>1</code>，否则打印<code>0</code></p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>let num: i32 = -169;
-for i in (0..32).rev() {
-    if (num &gt;&gt; i) &amp; 1 != 0 {
-        print!("1");
+<pre><code class="language-rust ignore">fn traverse(root: Option&lt;Node&gt;) {
+    if root.is_none() {
+        return;
     } else {
-        print!("0");
+        // 1
+        traverse(root.unwrap().left);
+        // 2
+        traverse(root.unwrap().right);
+        // 3
     }
-}
-<span class="boring">}</span></code></pre></pre>
+}</code></pre>
+<p>二叉树遍历的<strong>递归序</strong>，可以派生出三种遍历顺序，递归序就是每一个非空节点，在这个函数中都会有代码中<code>1/2/3</code>个位置执行当前节点的操作，不同的遍历序就是在不同的位置去打印了节点</p>
+<h2 id="二叉树的非递归遍历"><a class="header" href="#二叉树的非递归遍历">二叉树的非递归遍历</a></h2>
+<h3 id="先序遍历"><a class="header" href="#先序遍历">先序遍历</a></h3>
+<p>用栈实现二叉树的先序遍历</p>
+<ol>
+<li>先将头节点压入栈中</li>
+<li>重复以下过程直到栈为空：弹出栈顶元素，然后将该节点的右子树压入栈中，再将该节点的左子树压入栈中，这是因为要先弹出左子树，再弹出右子树</li>
+</ol>
+<h3 id="中序遍历"><a class="header" href="#中序遍历">中序遍历</a></h3>
+<p>用栈实现二叉树中序遍历</p>
+<ol>
+<li>先将头节点压入栈中</li>
+<li>将它的左边界（它自己的左子树节点和后续所有的左子树节点）压入栈中</li>
+<li>重复以下过程直到栈为空：弹出栈顶元素之后，将它的右子树及其左边界压入栈中。弹出过程就是左中右的中序遍历</li>
+</ol>
+<h3 id="后序遍历"><a class="header" href="#后序遍历">后序遍历</a></h3>
+<p>用栈实现二叉树后序遍历（两个栈）</p>
+<p>由于后序遍历的顺序是左右中，所以利用先序遍历（这里需要使用一个栈）的方法改为中右左的遍历顺序，然后再使用另一个栈保存之前的遍历结果，最后再依次弹出这个栈的元素就是正确结果</p>
+<p>用栈实现二叉树后序遍历（一个栈）</p>
+<ol>
+<li>记录当前弹出的节点（处理过的节点），也就是下一个要弹出的节点的上一个弹出节点</li>
+<li>第一次压入头节点
+<ol>
+<li>如果左右子树未处理，那么压入左子树
+<ol>
+<li>查看左子树，<strong>如果它的左右子树为空</strong>，那么<strong>弹出此节点并且更新记录为弹出节点</strong></li>
+</ol>
+</li>
+<li>继续查看栈顶节点，因为左子树处理过，所以压入右子树处理</li>
+</ol>
+</li>
+</ol>
+<h2 id="时间复杂度"><a class="header" href="#时间复杂度">时间复杂度</a></h2>
+<ul>
+<li>递归做法：由于每个节点在递归过程中会被访问三次，所以是<code>O(N)</code></li>
+<li>非递归做法：每个节点入栈次数可能是多次（引用），但是次数有限，所以时间复杂度也是<code>O(N)</code></li>
+</ul>
+<h2 id="空间复杂度"><a class="header" href="#空间复杂度">空间复杂度</a></h2>
+<p>都是<code>O(H)</code>，H是树的高度，因为无论是递归还是非递归（栈），它们的最大占用空间都是树的最高高度，对于递归来说，一条边界递归完成后的函数占用空间可以被回收利用，对于非递归，栈的空间也是可以在弹出之后循环利用</p>
+<h2 id="rust实现一个栈的后序遍历二叉树"><a class="header" href="#rust实现一个栈的后序遍历二叉树">Rust实现一个栈的后序遍历二叉树</a></h2>
+<p><img src="./image/same-node.png" alt="image" /></p>
+<p>在上图中的情况，如果使用<code>Rc::eq()</code>，它比较的是指针指向的具体值是否相等，会使得值相同的左右叶子节点被认为是同一个节点，所以在比较上一个弹出的节点和当前节点的左右子节点时应该使用<code>Rc::ptr_eq()</code>方法</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="overview.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="lesson_7.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="lesson_2.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="lesson_9.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -254,11 +232,11 @@ for i in (0..32).rev() {
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="overview.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="lesson_7.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="lesson_2.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="lesson_9.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>

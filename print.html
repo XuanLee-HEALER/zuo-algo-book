@@ -9,7 +9,7 @@
 
         <!-- Custom HTML head -->
 
-        <meta name="description" content="左神算法课程笔记">
+        <meta name="description" content="左神算法课程笔记,大厂算法笔试,算法">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
 
@@ -610,6 +610,100 @@ impl MyCircularDeque1 {
     }
 }
 </code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="二叉树及其三种序的遍历"><a class="header" href="#二叉树及其三种序的遍历">二叉树及其三种序的遍历</a></h1>
+<p>二叉树的简单定义：任意节点只有左右两个节点的树</p>
+<p>对于二叉树的三种序的遍历，就是在遍历时<strong>根节点所处的遍历位置</strong>，具体见下面的递归解析</p>
+<ul>
+<li>先序遍历：中-&gt;左-&gt;右</li>
+<li>中序遍历：左-&gt;中-&gt;右</li>
+<li>后序遍历：左-&gt;右-&gt;中</li>
+</ul>
+<pre><code class="language-rust ignore">fn traverse(root: Option&lt;Node&gt;) {
+    if root.is_none() {
+        return;
+    } else {
+        // 1
+        traverse(root.unwrap().left);
+        // 2
+        traverse(root.unwrap().right);
+        // 3
+    }
+}</code></pre>
+<p>二叉树遍历的<strong>递归序</strong>，可以派生出三种遍历顺序，递归序就是每一个非空节点，在这个函数中都会有代码中<code>1/2/3</code>个位置执行当前节点的操作，不同的遍历序就是在不同的位置去打印了节点</p>
+<h2 id="二叉树的非递归遍历"><a class="header" href="#二叉树的非递归遍历">二叉树的非递归遍历</a></h2>
+<h3 id="先序遍历"><a class="header" href="#先序遍历">先序遍历</a></h3>
+<p>用栈实现二叉树的先序遍历</p>
+<ol>
+<li>先将头节点压入栈中</li>
+<li>重复以下过程直到栈为空：弹出栈顶元素，然后将该节点的右子树压入栈中，再将该节点的左子树压入栈中，这是因为要先弹出左子树，再弹出右子树</li>
+</ol>
+<h3 id="中序遍历"><a class="header" href="#中序遍历">中序遍历</a></h3>
+<p>用栈实现二叉树中序遍历</p>
+<ol>
+<li>先将头节点压入栈中</li>
+<li>将它的左边界（它自己的左子树节点和后续所有的左子树节点）压入栈中</li>
+<li>重复以下过程直到栈为空：弹出栈顶元素之后，将它的右子树及其左边界压入栈中。弹出过程就是左中右的中序遍历</li>
+</ol>
+<h3 id="后序遍历"><a class="header" href="#后序遍历">后序遍历</a></h3>
+<p>用栈实现二叉树后序遍历（两个栈）</p>
+<p>由于后序遍历的顺序是左右中，所以利用先序遍历（这里需要使用一个栈）的方法改为中右左的遍历顺序，然后再使用另一个栈保存之前的遍历结果，最后再依次弹出这个栈的元素就是正确结果</p>
+<p>用栈实现二叉树后序遍历（一个栈）</p>
+<ol>
+<li>记录当前弹出的节点（处理过的节点），也就是下一个要弹出的节点的上一个弹出节点</li>
+<li>第一次压入头节点
+<ol>
+<li>如果左右子树未处理，那么压入左子树
+<ol>
+<li>查看左子树，<strong>如果它的左右子树为空</strong>，那么<strong>弹出此节点并且更新记录为弹出节点</strong></li>
+</ol>
+</li>
+<li>继续查看栈顶节点，因为左子树处理过，所以压入右子树处理</li>
+</ol>
+</li>
+</ol>
+<h2 id="时间复杂度-1"><a class="header" href="#时间复杂度-1">时间复杂度</a></h2>
+<ul>
+<li>递归做法：由于每个节点在递归过程中会被访问三次，所以是<code>O(N)</code></li>
+<li>非递归做法：每个节点入栈次数可能是多次（引用），但是次数有限，所以时间复杂度也是<code>O(N)</code></li>
+</ul>
+<h2 id="空间复杂度-1"><a class="header" href="#空间复杂度-1">空间复杂度</a></h2>
+<p>都是<code>O(H)</code>，H是树的高度，因为无论是递归还是非递归（栈），它们的最大占用空间都是树的最高高度，对于递归来说，一条边界递归完成后的函数占用空间可以被回收利用，对于非递归，栈的空间也是可以在弹出之后循环利用</p>
+<h2 id="rust实现一个栈的后序遍历二叉树"><a class="header" href="#rust实现一个栈的后序遍历二叉树">Rust实现一个栈的后序遍历二叉树</a></h2>
+<p><img src="./image/same-node.png" alt="image" /></p>
+<p>在上图中的情况，如果使用<code>Rc::eq()</code>，它比较的是指针指向的具体值是否相等，会使得值相同的左右叶子节点被认为是同一个节点，所以在比较上一个弹出的节点和当前节点的左右子节点时应该使用<code>Rc::ptr_eq()</code>方法</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="算法笔试中的输入输出处理"><a class="header" href="#算法笔试中的输入输出处理">算法笔试中的输入输出处理</a></h1>
+<h2 id="填函数风格"><a class="header" href="#填函数风格">填函数风格</a></h2>
+<p>leetcode平台的答题风格。给定一个问题，然后提供方法/类的签名（类名、方法名、参数类型/个数），只需要把解决问题的逻辑代码填充好，提交即可。网站后台会有两部分（测试数据和答案）内容，它会根据测试数据生成指定类型的参数，然后调用写好的函数，最后对比答案。这种形式比较简单清晰</p>
+<h2 id="acm风格"><a class="header" href="#acm风格">ACM风格</a></h2>
+<p>牛客，洛谷的风格。OJ网站后台依旧是同样的处理逻辑，但是它会要求考生自己从标准输入读取测试数据，并且在代码中将结果打印到标准输出。这里推荐使用<code>BufferReader</code>、<code>StreamTokenizer</code>、<code>PrintWriter</code>来对标准输入/输出做一层包装，目的是减少IO次数，不同语言都有对应的API。<code>StreamTokenizer</code>接口会提供一个函数，它的功能是可以从一个输入流中一次获取一个非空字符串</p>
+<p>⚠️除答案以外不要随便往标准输出打印东西</p>
+<h2 id="临时动态空间和全局静态空间"><a class="header" href="#临时动态空间和全局静态空间">临时动态空间和全局静态空间</a></h2>
+<p>因为每个测试用例都需要分配的临时数组，如果知道最大的数据规模，可以只创建一个静态的最大空间（数组），然后每个测试用例都复用这个空间，由于网站后台只算累积的内存使用量，这种方式可以跳过每次动态创建内存可能会碰到的内存限制</p>
+<h2 id="按行读"><a class="header" href="#按行读">按行读</a></h2>
+<p>对于一些题目，数据规模未知，只提示每个问题的测试数据是在一行中以特定分隔符划分，此时应该一次读取一行，然后自行分隔内容，再组装测试数据</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="递归和master公式"><a class="header" href="#递归和master公式">递归和master公式</a></h1>
+<h2 id="熟悉递归的方式"><a class="header" href="#熟悉递归的方式">熟悉递归的方式</a></h2>
+<ul>
+<li>递归调用图：表示为一个递归调用树，根节点就是第一次函数调用，然后分解为多次递归函数调用，每个调用可以继续往下分，不同节点的区别在于它们的调用参数会发生变化，每个节点计算完成会将结果返回给父节点，任何复杂的递归都可以用这种调用图来表示</li>
+<li>系统栈表示：函数第一次调用时，在内存中的函数声明（参数）、局部变量会在等待递归函数调用时被压入系统栈，然后开始进行递归调用，如果递归调用返回，那么返回值会传递给栈顶元素，此时系统会在内存中重建上下文，并且更新递归调用的返回值进行后续的计算</li>
+</ul>
+<blockquote>
+<p>任何递归函数都可以改成非递归函数。原理是通过自己构建一个栈来模拟递归过程中系统栈的操作</p>
+</blockquote>
+<h2 id="递归代码改非递归的必要性"><a class="header" href="#递归代码改非递归的必要性">递归代码改非递归的必要性</a></h2>
+<ul>
+<li>工程上一定改，因为系统栈小，代价高，所以可以在内存上自建栈实现同样的逻辑。除非问题规模可以保证无论数据量再多递归深度也不高就可以使用。<strong>同一层的递归空间可以复用</strong>，因为在一层中只有其它递归返回才能到当前的递归</li>
+<li>算法题只要能通过就不用改</li>
+</ul>
+<h2 id="master公式"><a class="header" href="#master公式">master公式</a></h2>
+<p>所有子问题的数据规模相同的递归才能套用master公式：<code>T(N) = a*T(N/b) + O(N^c)</code>，<code>a</code>、<code>b</code>、<code>c</code>都是常数。其中的时间复杂度是除了递归调用以外的程序的时间复杂度</p>
+<p>对于可以用master公式表示的算法可以直接计算时间复杂度</p>
+<ul>
+<li><code>logb(a)</code>如果大于<code>c</code>，那么时间复杂度为<code>O(N^(logb(a)))</code></li>
+<li><code>logb(a)</code>如果小于<code>c</code>，那么时间复杂度为<code>O(N^c)</code></li>
+<li><code>logb(a)</code>如果等于<code>c</code>，那么时间复杂度为<code>O(N^c*logN)</code></li>
+<li>补充，如果使用master公式表示算法的时间消耗为<code>T(N) = 2*T(N/2) + O(N*logN)</code>，那么时间复杂度为<code>O(N*(logN)^2)</code></li>
+</ul>
 
                     </main>
 
