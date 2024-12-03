@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>随便聊聊 - Zuo Algorithm Book</title>
+        <title>归并排序 - Zuo Algorithm Book</title>
 
 
         <!-- Custom HTML head -->
@@ -152,18 +152,96 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="随便聊聊"><a class="header" href="#随便聊聊">随便聊聊</a></h1>
-<p>⭐️⭐️⭐️<a href="https://space.bilibili.com/8888480"><strong>左神b站主页，推荐关注</strong></a>⭐️⭐️⭐️</p>
-<p>这本书记录我学习左神算法课过程中的笔记和一些想法，章节基本按照B站课程的顺序排列。之前的笔记在项目的README里面越来越长，查看也不太方便，就想整理为这种电子书的结构。</p>
-<p>左神原repo的算法实现都是Java写的，因为我现在的工作主力语言不是rust，但是我又十分喜欢这门语言，所以我的实现基本上都用rust来写（除了链表相关题目和一些OJ不支持rust的题目使用了C和C++）。不过编程语言只是实现算法的一种手段，用什么都可以，如果追求性能推荐使用静态语言（C/C++），其他情况只要顺手即可。算法的核心永远是解决问题的思路！</p>
-<p>虽然我觉得现在自己才接触算法，乃至算法竞赛相关的内容太晚了，但是从追求进入大厂的目标到现在有些乐在其中的过程，我还是很庆幸接触了这门课程。希望能在之后的工作和学习中，永远不丢掉对算法的学习热情。</p>
+                        <h1 id="归并排序"><a class="header" href="#归并排序">归并排序</a></h1>
+<p>归并排序的基本逻辑是，对于一个无序数组，先将左边一半数据排好序，然后再将右边一半数据排好序，最后把两个有序子数组按照大小关系进行合并，排序完成</p>
+<p>合并操作（<em>merge</em>）：遍历左右两个有序子数组的元素，谁小拷贝谁到辅助数组中，直到遍历完两个数组，然后将辅助数组的结果更新回原数组</p>
+<p>时间复杂度：<code>O(N*logN)</code>，空间复杂度：<code>O(N)</code>（需要辅助数组）</p>
+<p>归并排序时间复杂度低的本质原因是没有浪费比较行为的结果，每次比较/归并都会使数组更有序，而<code>O(N^2)</code>的排序方法中有大量的比较结果都被抛弃掉了</p>
+<p>⚠️使空间复杂度降低为<code>O(1)</code>的归并排序，即不借用辅助数组的方式没必要学习，因为这种方式会让时间复杂度降低为<code>O(N^2)</code></p>
+<h2 id="递归实现"><a class="header" href="#递归实现">递归实现</a></h2>
+<pre><code class="language-rust ignore">fn merge_sort_rec(nums: &amp;[i32], l: usize, r: usize) -&gt; Vec&lt;i32&gt; {
+    // 数组有序，不需要排序
+    if l == r {
+        nums[l..l + 1].into()
+    } else {
+        let m = l + ((r - l) &gt;&gt; 1);
+        let left_sorted = Self::merge_sort_rec(nums, l, m);
+        let right_sorted = Self::merge_sort_rec(nums, m + 1, r);
+        Self::merge(&amp;left_sorted, &amp;right_sorted)
+    }
+}
+
+fn merge(left: &amp;[i32], right: &amp;[i32]) -&gt; Vec&lt;i32&gt; {
+    let mut res = Vec::new();
+
+    let mut i = 0;
+    let mut j = 0;
+    let il = left.len();
+    let jl = right.len();
+    while i &lt; il &amp;&amp; j &lt; jl {
+        if left[i] &lt;= right[j] {
+            res.push(left[i]);
+            i += 1;
+        } else {
+            res.push(right[j]);
+            j += 1;
+        }
+    }
+
+    while i &lt; il {
+        res.push(left[i]);
+        i += 1;
+    }
+
+    while j &lt; jl {
+        res.push(right[j]);
+        j += 1;
+    }
+
+    res
+}</code></pre>
+<h2 id="非递归实现"><a class="header" href="#非递归实现">非递归实现</a></h2>
+<p>利用步长遍历，开始步长为1，从数组开头开始，以<code>l+step</code>为中点，<code>(l+step+step).min(r_limit)</code>为终点进行两个子数组的<code>merge</code>操作，比如数组长度为10，当前位置是<code>l=0</code>，那么中点是<code>mid=1</code>，终点位置是<code>r = (0+2).min(10) = 2</code>，两个子数组分别是<code>arr[l..mid]</code>和<code>arr[mid..r]</code>。将merge的结果更新回原数组，直到遍历位置大于<code>r_limit</code>，进下一轮，然后每轮步长乘2，直到步长超过数组长度</p>
+<pre><code class="language-rust ignore">fn merge_sort_no_rec(nums: &amp;mut [i32]) -&gt; Vec&lt;i32&gt; {
+    let rl = nums.len();
+    let mut step = 1;
+    while step &lt; rl {
+        let mut l = 0;
+        while l &lt; rl {
+            let mid = l + step;
+            if mid &gt;= rl {
+                break;
+            }
+
+            let r = cmp::min(mid + step, rl);
+            let left_arr = &amp;nums[l..mid];
+            let right_arr = &amp;nums[mid..r];
+            // 逻辑见递归实现的merge方法
+            let merge_res = Self::merge(left_arr, right_arr);
+            let mut tl = l;
+            // 将merge结果更新回原数组
+            for e in merge_res {
+                nums[tl] = e;
+                tl += 1;
+            }
+
+            l = r;
+        }
+        step &lt;&lt;= 1;
+    }
+
+    nums.into()
+}</code></pre>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="lesson_10.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
 
-                            <a rel="next prefetch" href="lesson_1.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="lesson_12.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -173,8 +251,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="lesson_10.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
 
-                    <a rel="next prefetch" href="lesson_1.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="lesson_12.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>

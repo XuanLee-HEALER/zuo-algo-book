@@ -704,6 +704,161 @@ impl MyCircularDeque1 {
 <li><code>logb(a)</code>如果等于<code>c</code>，那么时间复杂度为<code>O(N^c*logN)</code></li>
 <li>补充，如果使用master公式表示算法的时间消耗为<code>T(N) = 2*T(N/2) + O(N*logN)</code>，那么时间复杂度为<code>O(N*(logN)^2)</code></li>
 </ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="归并排序"><a class="header" href="#归并排序">归并排序</a></h1>
+<p>归并排序的基本逻辑是，对于一个无序数组，先将左边一半数据排好序，然后再将右边一半数据排好序，最后把两个有序子数组按照大小关系进行合并，排序完成</p>
+<p>合并操作（<em>merge</em>）：遍历左右两个有序子数组的元素，谁小拷贝谁到辅助数组中，直到遍历完两个数组，然后将辅助数组的结果更新回原数组</p>
+<p>时间复杂度：<code>O(N*logN)</code>，空间复杂度：<code>O(N)</code>（需要辅助数组）</p>
+<p>归并排序时间复杂度低的本质原因是没有浪费比较行为的结果，每次比较/归并都会使数组更有序，而<code>O(N^2)</code>的排序方法中有大量的比较结果都被抛弃掉了</p>
+<p>⚠️使空间复杂度降低为<code>O(1)</code>的归并排序，即不借用辅助数组的方式没必要学习，因为这种方式会让时间复杂度降低为<code>O(N^2)</code></p>
+<h2 id="递归实现"><a class="header" href="#递归实现">递归实现</a></h2>
+<pre><code class="language-rust ignore">fn merge_sort_rec(nums: &amp;[i32], l: usize, r: usize) -&gt; Vec&lt;i32&gt; {
+    // 数组有序，不需要排序
+    if l == r {
+        nums[l..l + 1].into()
+    } else {
+        let m = l + ((r - l) &gt;&gt; 1);
+        let left_sorted = Self::merge_sort_rec(nums, l, m);
+        let right_sorted = Self::merge_sort_rec(nums, m + 1, r);
+        Self::merge(&amp;left_sorted, &amp;right_sorted)
+    }
+}
+
+fn merge(left: &amp;[i32], right: &amp;[i32]) -&gt; Vec&lt;i32&gt; {
+    let mut res = Vec::new();
+
+    let mut i = 0;
+    let mut j = 0;
+    let il = left.len();
+    let jl = right.len();
+    while i &lt; il &amp;&amp; j &lt; jl {
+        if left[i] &lt;= right[j] {
+            res.push(left[i]);
+            i += 1;
+        } else {
+            res.push(right[j]);
+            j += 1;
+        }
+    }
+
+    while i &lt; il {
+        res.push(left[i]);
+        i += 1;
+    }
+
+    while j &lt; jl {
+        res.push(right[j]);
+        j += 1;
+    }
+
+    res
+}</code></pre>
+<h2 id="非递归实现"><a class="header" href="#非递归实现">非递归实现</a></h2>
+<p>利用步长遍历，开始步长为1，从数组开头开始，以<code>l+step</code>为中点，<code>(l+step+step).min(r_limit)</code>为终点进行两个子数组的<code>merge</code>操作，比如数组长度为10，当前位置是<code>l=0</code>，那么中点是<code>mid=1</code>，终点位置是<code>r = (0+2).min(10) = 2</code>，两个子数组分别是<code>arr[l..mid]</code>和<code>arr[mid..r]</code>。将merge的结果更新回原数组，直到遍历位置大于<code>r_limit</code>，进下一轮，然后每轮步长乘2，直到步长超过数组长度</p>
+<pre><code class="language-rust ignore">fn merge_sort_no_rec(nums: &amp;mut [i32]) -&gt; Vec&lt;i32&gt; {
+    let rl = nums.len();
+    let mut step = 1;
+    while step &lt; rl {
+        let mut l = 0;
+        while l &lt; rl {
+            let mid = l + step;
+            if mid &gt;= rl {
+                break;
+            }
+
+            let r = cmp::min(mid + step, rl);
+            let left_arr = &amp;nums[l..mid];
+            let right_arr = &amp;nums[mid..r];
+            // 逻辑见递归实现的merge方法
+            let merge_res = Self::merge(left_arr, right_arr);
+            let mut tl = l;
+            // 将merge结果更新回原数组
+            for e in merge_res {
+                nums[tl] = e;
+                tl += 1;
+            }
+
+            l = r;
+        }
+        step &lt;&lt;= 1;
+    }
+
+    nums.into()
+}</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="归并分治"><a class="header" href="#归并分治">归并分治</a></h1>
+<p>归并分治是一种解决问题的算法思想，它的原理如下</p>
+<ol>
+<li>考虑一个问题在所有数据范围上的答案，是否可以转化为左半部分数据的答案和右半部分数据的答案通过累加或其它组合方式得到</li>
+<li>在组合两部分的答案时，如果左右部分的答案是有序的，是否可以获取计算的便利性？</li>
+<li>如果以上两点成立，那么这个问题大概率可以通过归并分治解决</li>
+<li>求解答案的过程中要加入归并排序的过程，因为在计算组合答案时会用到</li>
+</ol>
+<h2 id="小和问题"><a class="header" href="#小和问题">小和问题</a></h2>
+<p>问题描述：给定一个数组，定义<strong>小和</strong>为每个数组元素左边小于等于它的所有元素的和，求数组的小和，即数组中每个元素的小和之和</p>
+<p>解法：一个数组的小和可以等效为它左半部分的小和和右半部分的小和再加上左半部分相对于右半部分元素的小和之和。每个数在最终答案中出现的次数取决于它相对于它右边的数字更小的次数，所以左半部分的元素需要计算<strong>相对于自身右边</strong>所有元素更小的次数，右半部分只需要每个元素相对于右半部分内自身右边元素更小的次数</p>
+<p>计算合并的小和时如果左右两部分数组是有序的，那么在<code>O(N)</code>的时间复杂度内就可以计算完成，使用两个指针指向左右两部分的头部，那么左指针小于右指针一次，就会累加小和右部分的总数次，依次遍历后得到左边部分元素相对于右半部分的小和结果。在实现过程中要在每次<strong>计算完小和后</strong>将两部分元素进行归并排序，便于后续计算</p>
+<pre><code class="language-rust ignore">//省略主流程，主要看merge过程
+fn merge_with_count(nums: &amp;mut [i32], aid: &amp;mut [i32], l: usize, r: usize, mid: usize) -&gt; i64 {
+    let mut res = 0;
+    // ⚠️这里需要记录累计和，即更小的值需要加多次，所以不能直接用res来记录
+    let mut tc = 0;
+    let mut tl = l;
+    let mut tr = mid;
+    // 计算左半部分小于右半部分的小和
+    // 因为这里两个子数组已经是有序的，所以当左边的元素大于右边的元素就可以直接跳出内层循环
+    while tr &lt;= r {
+        while tl &lt; mid {
+            if nums[tl] &lt;= nums[tr] {
+                tc += nums[tl] as i64;
+                tl += 1;
+            } else {
+                break;
+            }
+        }
+        res += tc;
+        tr += 1;
+    }
+
+    // 以下为归并排序过程
+    let mut count = 0;
+    let mut tl = l;
+    let mut tr = mid;
+    while tl &lt; mid &amp;&amp; tr &lt;= r {
+        if nums[tl] &lt;= nums[tr] {
+            aid[count] = nums[tl];
+            tl += 1;
+        } else {
+            aid[count] = nums[tr];
+            tr += 1;
+        }
+        count += 1;
+    }
+
+    while tl &lt; mid {
+        aid[count] = nums[tl];
+        tl += 1;
+        count += 1;
+    }
+
+    while tr &lt;= r {
+        aid[count] = nums[tr];
+        tr += 1;
+        count += 1;
+    }
+
+    nums[l..=r].copy_from_slice(&amp;aid[..count]);
+
+    res
+}</code></pre>
+<h2 id="翻转对数量"><a class="header" href="#翻转对数量">翻转对数量</a></h2>
+<p>问题描述：给定一个数组，如果<code>i &lt; j</code>且<code>arr[i] &gt; 2 * arr[j]</code>，那么<code>(i, j)</code>就是一个翻转对，返回给定翻转对的数量</p>
+<p>解法：和上一题相同，翻转对判定需要左边元素和右边元素有一个数量大小关系，那么整个数组的翻转对数量就是左半部分的翻转对数量和右半部分的翻转对数量，加上左半部分相对于右半部分的翻装对数量。本题中如果数组有序会便于后续计算，所以在归并计算翻转对完成后执行归并排序步骤</p>
+<h2 id="补充"><a class="header" href="#补充">补充</a></h2>
+<ol>
+<li>一些用归并分治解决的问题，也可以用树状数组、线段树来解决，时间复杂度也是最优</li>
+<li>归并分治也可以解决较难的问题，例如空间中任何两点间的最短距离</li>
+<li>“整块分治”</li>
+</ol>
+<p>归并分治是<strong>数据结构和算法中的思想传统</strong>之一</p>
 
                     </main>
 
@@ -739,6 +894,8 @@ impl MyCircularDeque1 {
         <script src="book.js"></script>
 
         <!-- Custom JS scripts -->
+        <script src="assets/fzf.umd.js"></script>
+        <script src="assets/elasticlunr.js"></script>
 
         <script>
         window.addEventListener('load', function() {
