@@ -859,6 +859,180 @@ fn merge_with_count(nums: &amp;mut [i32], aid: &amp;mut [i32], l: usize, r: usiz
 <li>“整块分治”</li>
 </ol>
 <p>归并分治是<strong>数据结构和算法中的思想传统</strong>之一</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="随机快速排序"><a class="header" href="#随机快速排序">随机快速排序</a></h1>
+<h2 id="经典随机快速排序流程"><a class="header" href="#经典随机快速排序流程">经典随机快速排序流程</a></h2>
+<ol>
+<li>在一个数组中<strong>随机</strong>选取一个数</li>
+<li>将整个数组中小于等于这个数的所有数移动到左边，大于这个数的所有数移动到右边</li>
+<li>将选中的数字移动到小于等于这个数的所有数的最右边，此时这个数列中存在一个有序的数（即选中的这个数）</li>
+<li>以这个数的左右位置为界，对前后两个子数列重复此过程</li>
+</ol>
+<pre><code class="language-rust ignore compile_fail">fn sort_array(mut nums: Vec&lt;i32&gt;) -&gt; Vec&lt;i32&gt; {
+    let mut rng = rand::thread_rng();
+    let arr_len = nums.len();
+    quick_sort(&amp;mut nums, 0, arr_len - 1, &amp;mut rng);
+    nums
+}
+
+// in-memory  quicksort
+fn quick_sort&lt;R: Rng + ?Sized&gt;(nums: &amp;mut [i32], l: usize, r: usize, rng: &amp;mut R) {
+    if l &lt; r {
+        // 随机选择一个数
+        let ri = rng.gen_range(l..=r);
+        let (tl, tr) = partition1(nums, l, r, ri);
+        if tl &gt; 0 {
+            quick_sort(nums, l, tl - 1, rng);
+        }
+        quick_sort(nums, tr + 1, r, rng);
+    }
+}
+
+fn partition1(nums: &amp;mut [i32], l: usize, r: usize, mid: usize) -&gt; usize {
+    // 由于没有额外的数组空间且数组会发生变化，所以这里要先记录被比较的值，也可以直接将值传进来而不用索引
+    let cmp_val = nums[mid];
+    // 被交换的位置，只要被交换过就加1
+    let mut a = l;
+    // 遍历当前值
+    let mut i = l;
+    // xi需要记录的是等于这个数的任意一个位置
+    let mut xi = l;
+    while i &lt;= r {
+        // 只处理数组中大于等于该值的元素
+        if nums[i] &lt;= cmp_val {
+            if nums[i] == cmp_val {
+                xi = a;
+            }
+            // 只要当前值小于等于随机值，就要交换
+            nums.swap(i, a);
+            a += 1;
+        }
+        i += 1;
+    }
+    // a当前记录的位置是小于等于随机值的所有数的下一个位置，所以和a-1位置交换
+    nums.swap(xi, a - 1);
+    // a-1位置就是排好序的随机值的位置
+    a - 1
+}</code></pre>
+<h2 id="荷兰国旗优化过程"><a class="header" href="#荷兰国旗优化过程">荷兰国旗优化过程</a></h2>
+<p>随机选出的某个数字在分组过程中，是可以统一处理的，即小于这个数的在左，大于这个数的在右，中间全部都是这个数，那么在一次分组过程中，同样的<code>O(N)</code>时间复杂度可以处理完更多的数字</p>
+<pre><code class="language-rust ignore">// 快排大流程和经典过程相同，只关注partition方法变化
+// 优化方法返回的是随机值的左、右索引
+fn partition2(nums: &amp;mut [i32], l: usize, r: usize, mid: usize) -&gt; (usize, usize) {
+    let mut a = l;
+    let mut b = r;
+    let mut i = l;
+    let cmp_val = nums[mid];
+    while i &lt;= b {
+        match nums[i].cmp(&amp;cmp_val) {
+            Ordering::Less =&gt; {
+                // 如果当前值小于随机值，那么从头开始交换
+                nums.swap(a, i);
+                a += 1;
+                i += 1;
+            }
+            Ordering::Equal =&gt; {
+                i += 1;
+            }
+            Ordering::Greater =&gt; {
+                // 如果当前值大于随机值，那么从尾部交换
+                // ⚠️此时被交换回去的数不确定，只要把尾指针减1即可
+                nums.swap(b, i);
+                b -= 1;
+            }
+        }
+    }
+
+    (a, b)
+}</code></pre>
+<h2 id="复杂度计算"><a class="header" href="#复杂度计算">复杂度计算</a></h2>
+<h3 id="选择固定位置的数字"><a class="header" href="#选择固定位置的数字">选择固定位置的数字</a></h3>
+<p>最差情况：每次只能排好首位或者末位的数字，此时快排时间复杂度退化为<code>O(N^2)</code>，因为每个数字都需要和所有其他数字比较一遍，并且问题规模每次仅缩小一个，空间复杂度为<code>O(N)</code>，即递归深度为<code>N</code></p>
+<p>最好情况：每次都能选中处于有序数列中点的位置，那么此时可以利用master公式<code>T(N) = 2*T(N/2) + O(N)</code>，即时间复杂度为<code>O(N*logN)</code>，空间复杂度为<code>O(logN)</code>，因为这种情况代表每次递归都可以平分问题规模，即递归深度为<code>logN</code></p>
+<h3 id="使用随机选择的数字"><a class="header" href="#使用随机选择的数字">使用随机选择的数字</a></h3>
+<p>⚠️根据<a href="./lesson_5.html#%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6">时间复杂度和空间复杂度</a>部分的内容，如果一个算法中，随机过程会直接影响算法过程，那么估计时间复杂度应该使用随机的数学期望计算</p>
+<p>结论：使用随机数作为分界点的快速排序的时间复杂度为<code>O(N*logN)</code>，空间复杂度为<code>O(logN)</code>，证明略（证明过程可参考《算法导论》）</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="随机选择算法"><a class="header" href="#随机选择算法">随机选择算法</a></h1>
+<p>问题描述：求无序数组中第<code>x</code>大/小的数，要求时间复杂度为<code>O(N)</code>，空间复杂度为<code>O(1)</code></p>
+<p>解法：使用随机快排的荷兰国旗优化过程，将问题中的求第x大转化为求有序数列的第<code>len(arr)-x</code>位置的值即可，在快排的流程中随机选择数，划分为三个区间，如果中间区间符合要求（即每次<em>partition</em>过程返回的两个坐标是否包含题目中的<code>x</code>）则返回这个数，否则从左边或右边重复此过程</p>
+<p>时间复杂度：最坏为<code>O(N^2)</code>，因为可能永远选择的是最远的数字，此时选一个数要遍历一次全部数组。最好为<code>O(N)</code>，即每次要么直接选中这个数，要么选中的是排在中间的数，此时会减少一半问题范围，那么时间复杂度为<code>N+1/2N+...</code>，最终收敛于<code>O(N)</code>的时间复杂度，<code>N</code>是遍历的内容</p>
+<h2 id="bfprt算法"><a class="header" href="#bfprt算法">BFPRT算法</a></h2>
+<p>BFPRT算法可以在<code>O(N)</code>时间复杂度和<code>O(logN)</code>的空间复杂度实现在无随机选择的前提下完成这个题目</p>
+<p>⚠️算法冷门，自己写出来的还过不了lc题目（TLE），代码放这里仅供参考，逻辑应该是对的</p>
+<p>BFPRT算法描述</p>
+<ol>
+<li>选择一个常数c，将无序数列划分为N/c组</li>
+<li>在每组中找到中位数（由于是常数个数，所以排序时间复杂度为<code>O(1)</code>，所有组的和为<code>O(N)</code>），在所有中位数上找中位数（时间复杂度为<code>T(N/c)</code>），这个中位数是主元（<em>pivot</em>）</li>
+<li>使用主元将数组分为两部分，如果主元位置对，则返回</li>
+<li>或者在较小或较大的部分上递归调用BFPRT算法</li>
+</ol>
+<p>时间复杂度为<code>T(N) = T(N/c) + T((c-2)/N*(c-1)) + O(N)</code>，计算得到时间复杂度为<code>O(N)</code></p>
+<pre><code class="language-rust ignore">fn find_kth_largest_1(nums: Vec&lt;i32&gt;, k: i32) -&gt; i32 {
+    let mut nums = nums;
+    let n = nums.len();
+    if n &lt;= 5 {
+        nums.sort();
+        nums[n - k as usize]
+    } else {
+        Self::bfprt(&amp;mut nums, 0, n - 1, 5, k)
+    }
+}
+
+fn bfprt(nums: &amp;mut [i32], l: usize, r: usize, c: usize, k: i32) -&gt; i32 {
+    let cmp_val = Self::pivot(&amp;nums[l..=r], c);
+    let mut a = l;
+    let mut i = l;
+    let mut xi = l;
+    while i &lt;= r {
+        match nums[i].cmp(&amp;cmp_val) {
+            Ordering::Less =&gt; {
+                nums.swap(a, i);
+                a += 1
+            }
+            Ordering::Equal =&gt; {
+                nums.swap(a, i);
+                xi = a;
+                a += 1;
+            }
+            Ordering::Greater =&gt; (),
+        }
+        i += 1
+    }
+    nums.swap(xi, a - 1);
+    match (nums.len() - a + 1).cmp(&amp;(k as usize)) {
+        Ordering::Equal =&gt; nums[a - 1],
+        Ordering::Less =&gt; Self::bfprt(nums, l, a - 2, c, k),
+        Ordering::Greater =&gt; Self::bfprt(nums, a, r, c, k),
+    }
+}
+
+fn pivot(nums: &amp;[i32], c: usize) -&gt; i32 {
+    let mut midst = Vec::with_capacity((nums.len() + c - 1) / c);
+    let n = nums.len();
+    let mut i = 0;
+    while i &lt; n {
+        midst.push(Self::median(&amp;nums[i..(i + c).min(n)]));
+        i += c;
+    }
+    Self::median(&amp;midst)
+}
+
+fn median(nums: &amp;[i32]) -&gt; i32 {
+    let n = nums.len();
+    let mut aid = vec![0; n];
+    let mut i = 0;
+    while i &lt; n {
+        aid[i] = nums[i];
+        let mut ti = i;
+        while ti &gt; 0 &amp;&amp; nums[ti] &lt; nums[ti - 1] {
+            aid.swap(ti, ti - 1);
+            ti -= 1;
+        }
+
+        i += 1;
+    }
+
+    aid[n &gt;&gt; 1]
+}</code></pre>
 
                     </main>
 
