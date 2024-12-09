@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>哈希表、有序表和比较器的用法 - Zuo Algorithm Book</title>
+        <title>排序总结 - Zuo Algorithm Book</title>
 
 
         <!-- Custom HTML head -->
@@ -152,37 +152,41 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="哈希表有序表和比较器的用法"><a class="header" href="#哈希表有序表和比较器的用法">哈希表、有序表和比较器的用法</a></h1>
-<h2 id="哈希表"><a class="header" href="#哈希表">哈希表</a></h2>
-<p>哈希表可以认为是一个集合，对集合中的元素做<strong>查询/增删改</strong>操作的时间复杂度都是<code>O(1)</code>，但这是一个<strong>大常数时间</strong>，Java中以<code>HashSet</code>为例，如果每个元素携带伴随数据就是<code>HashMap</code>结构</p>
-<p>哈希表内的元素相互比较是使用自身的值进行比较而不是它们的内存地址</p>
-<p>如果哈希表的<strong>key的范围是固定、可控的</strong>，那么可以使用数组来替代哈希表。此时增删改查的时间复杂度还是<code>O(1)</code></p>
-<h2 id="有序表"><a class="header" href="#有序表">有序表</a></h2>
-<p><code>TreeMap</code>是有序表的一种实现。底层数据结构是红黑树。也可以将它看为一个集合，只是它保存其中的元素是有序的。有序表的操作时间复杂度是<code>O(logN)</code></p>
-<p>和哈希表一样，有序表中也不会有重复数据。如果不想去重可以加入更多的比较策略（比较器定制），比如比较过程中除了值的比较还要结合内存地址的比较，这样两个相同值的元素也可以在一个有序表中共存</p>
-<h2 id="堆"><a class="header" href="#堆">堆</a></h2>
-<p><code>PriorityQueue</code>是Java中对堆的一个实现，也叫优先级队列，默认构建一个小根堆，并且不会去重，可以利用自定义的比较器来构建不同的堆</p>
-<h2 id="比较器定制"><a class="header" href="#比较器定制">比较器定制</a></h2>
-<p>比较器的默认逻辑中，如果<code>o1</code>和<code>o2</code>比较，</p>
-<ol>
-<li>如果返回负数则<code>o1</code>优先级高</li>
-<li>如果是正数则<code>o2</code>优先级高</li>
-</ol>
-<p>构造一个有序表的时候需要提供一个使用其中元素同类型的比较器，例如<code>fn cmp(o1: T, o2: T) -&gt; i32</code></p>
-<h3 id="字典序"><a class="header" href="#字典序">字典序</a></h3>
-<p>两个字符串如何比大小？一个字符串总可以看作是一个256进制的数字（ASCII），如果字符串长度相同，则直接比较两个数字，如果长度不同，那么使用<code>0</code>（256进制最小的数值）将短的字符串填到和长字符串长度相同，然后再进行比较，这样的比较顺序就叫做字典序</p>
+                        <h1 id="排序总结"><a class="header" href="#排序总结">排序总结</a></h1>
+<div class="table-wrapper"><table><thead><tr><th>排序算法</th><th>时间复杂度</th><th>空间复杂度</th><th>稳定性</th><th>备注</th></tr></thead><tbody>
+<tr><td>选择排序</td><td><code>O(N^2)</code></td><td><code>O(1)</code></td><td>不稳定</td><td>每次都需要选择最后一个最小的数放到最前面，所以不稳定</td></tr>
+<tr><td>冒泡排序</td><td><code>O(N^2)</code></td><td><code>O(1)</code></td><td>稳定</td><td>只要每次相同两个数比较不交换就能保证稳定性</td></tr>
+<tr><td>插入排序</td><td><code>O(N^2)</code></td><td><code>O(1)</code></td><td>稳定</td><td>只要每次插入时相同的数不插入到前面就能保持稳定性</td></tr>
+<tr><td>归并排序</td><td><code>O(N*logN)</code></td><td><code>O(N)</code></td><td>稳定</td><td>在归并时以左侧为开头进行归并就能保持稳定性</td></tr>
+<tr><td>快速排序</td><td><code>O(N*logN)</code></td><td><code>O(logN)</code></td><td>不稳定</td><td>每次随机选择的数总是在相同数的最后，无法保证稳定性</td></tr>
+<tr><td>堆排序</td><td><code>O(N*logN)</code></td><td><code>O(1)</code></td><td>不稳定</td><td>堆化过程不考虑稳定性</td></tr>
+<tr><td>计数排序</td><td><code>O(N)</code></td><td><code>O(M)</code></td><td>稳定</td><td>入桶出桶严格按照次序，保证稳定性</td></tr>
+<tr><td>基数排序</td><td><code>O(N)</code></td><td><code>O(M)</code></td><td>稳定</td><td>入桶出桶严格按照次序，保证稳定性</td></tr>
+</tbody></table>
+</div>
+<p>选择什么排序方法取决于更关心什么？</p>
+<ul>
+<li>如果元素数量少，可以使用<strong>插入排序</strong>，因为它的常数操作时间小</li>
+<li>元素数量多，需要性能优异，且可以保证稳定性，不在乎空间占用，可以使用<strong>归并排序</strong></li>
+<li>元素数量多，需要性能优异，有调整空间，可以选择<strong>快速排序</strong>，因为快排选择随机数的策略可以指定</li>
+<li>元素数量多，需要性能优异，不在乎稳定性，且对空间占用有要求，可以使用<strong>堆排序</strong></li>
+</ul>
+<p>⚠️目前不存在时间复杂度是<code>O(N*logN)</code>且空间复杂度小于<code>O(N)</code>且保持稳定性的算法</p>
+<h2 id="其它排序算法"><a class="header" href="#其它排序算法">其它排序算法</a></h2>
+<h3 id="timsort"><a class="header" href="#timsort">Timsort</a></h3>
+<p><a href="https://bugs.python.org/file4451/timsort.txt">Timsort</a></p>
+<h3 id="shellsort"><a class="header" href="#shellsort">Shellsort</a></h3>
+<p>每次将一个数组划分为<code>k</code>部分，然后对每部分的每个值进行插入排序，直到<code>k=1</code></p>
+<p>性能和划分的<code>k</code>取值有关，这是一个in-place的排序算法</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="lesson_15.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="lesson_17.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="lesson_17.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                                <i class="fa fa-angle-right"></i>
-                            </a>
 
                         <div style="clear: both"></div>
                     </nav>
@@ -190,13 +194,10 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="lesson_15.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="lesson_17.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="lesson_17.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                        <i class="fa fa-angle-right"></i>
-                    </a>
             </nav>
 
         </div>
