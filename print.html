@@ -1230,6 +1230,86 @@ fn radix_sort(arr: &amp;mut [i32], n: i32, base: i32) {
 <h3 id="shellsort"><a class="header" href="#shellsort">Shellsort</a></h3>
 <p>每次将一个数组划分为<code>k</code>部分，然后对每部分的每个值进行插入排序，直到<code>k=1</code></p>
 <p>性能和划分的<code>k</code>取值有关，这是一个in-place的排序算法</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="异或运算的骚操作"><a class="header" href="#异或运算的骚操作">异或运算的骚操作</a></h1>
+<p>举例题目：一个袋子中有<code>a</code>个白球和<code>b</code>和黑球，每次拿出两个球，如果两个球颜色相同，则往袋子中新放一个白球，否则放一个黑球，那么当最终袋子只剩一个球时，这个球是白球或黑球的概率用<code>a</code>和<code>b</code>如何表示</p>
+<p>解题思路：假设白球表示<code>0</code>、黑球表示<code>1</code>，将每次操作看作一个异或运算（相同为0，不同为1），并且生成一个结果，那么问题的结果就是所有球表示的数字的异或和，所有结果和白球的数量无关，当黑球数量为奇数时，一定会剩一个黑球，否则会剩一个白球。这个问题使用白黑球展示了N个一位二进制数的异或运算结果</p>
+<h2 id="异或运算的性质"><a class="header" href="#异或运算的性质">异或运算的性质</a></h2>
+<ol>
+<li>异或运算就是获取两个数的<strong>无进位相加</strong>结果</li>
+<li>异或运算满足交换律和结合律。在异或运算中，运算顺序不影响结果</li>
+<li><code>0^N=N</code>和<code>N^N=0</code></li>
+<li>一批数字的一部分的异或和为<code>a</code>，总异或和为<code>b</code>，那么剩下一部分的异或和就是<code>c=a^b</code></li>
+</ol>
+<p>⚠️性质1最重要，其余性质可以通过性质1推出。性质4出的考题最多</p>
+<h2 id="异或运算相关题目"><a class="header" href="#异或运算相关题目">异或运算相关题目</a></h2>
+<h3 id="交换两个数"><a class="header" href="#交换两个数">交换两个数</a></h3>
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn exchange_2_nums(a: &amp;mut i32, b: &amp;mut i32) {
+    // 如果 a^b=c，此时a=c
+    *a ^= *b;
+    // 此时 b=b^c=a
+    *b ^= *a;
+    // 此时 a=c^b=a
+    *a ^= *b;
+}
+<span class="boring">}</span></code></pre></pre>
+<p>❗️这种交换方式如果两个数在同一个内存地址，即两个数的值相同，那么第一次异或操作结果就是0，无法进行值的交换且会将自己改为0，所以在数组中交换位置<strong>不推荐</strong>用这种方式</p>
+<h3 id="不用任何判断和比较语句返回两个数的最大值"><a class="header" href="#不用任何判断和比较语句返回两个数的最大值">不用任何判断和比较语句，返回两个数的最大值</a></h3>
+<p>主要思路是使用符号位转化为对两个值相乘的系数，分别为<code>0</code>和<code>1</code>，达到返回最大值的效果</p>
+<h4 id="不考虑溢出"><a class="header" href="#不考虑溢出">不考虑溢出</a></h4>
+<pre><code class="language-rust ignore">fn flip(mut n: i32) -&gt; i32 {
+    n ^= 1;
+    n
+}
+
+fn sign(n: i32) -&gt; i32 {
+    (n &gt;&gt; 31) &amp; 1
+}
+
+fn max_val_1(a: i32, b: i32) -&gt; i32 {
+    // 这里的结果可能溢出！
+    let c = a - b;
+    let c_sign = sign(c);
+    // 如果c_sign是1，c为负数，则a更小，ret_a应该为0，返回b，反之亦然
+    let ret_a = flip(c_sign);
+    ret_a * a + c_sign * b
+}</code></pre>
+<h4 id="考虑溢出"><a class="header" href="#考虑溢出">考虑溢出</a></h4>
+<pre><code class="language-rust ignore">fn max_val_2(a: i32, b: i32) -&gt; i32 {
+    // 这里不会溢出
+    let c = a.wrapping_sub(b);
+    // 拿到符号
+    let c_sign = sign(c);
+
+    let a_sign = sign(a);
+    let b_sign = sign(b);
+    // a b符号相同，c不会溢出
+    // a b符号不同，只要看a是不是正数
+    let diff_s = a_sign ^ b_sign;
+    let same_s = flip(diff_s);
+    // 决定是否为a的条件是
+    // 如果a b符号相同，diff_s=0，只要看差的符号 same_s*flip(c_sign)，如果是负数表示a更小，所以需要翻转
+    // 如果a b符号不同，那么差的符号不看，same_s=0，只要看a是否为正数，diff_s*flip(a_sign)，如果a是正数，那么需要保留，所以需要翻转
+    let ret_a = diff_s * flip(a_sign) + same_s * flip(c_sign);
+    ret_a * a + flip(ret_a) * b
+}</code></pre>
+<h3 id="找到缺失的数字"><a class="header" href="#找到缺失的数字">找到缺失的数字</a></h3>
+<p>问题描述：有一长度为N的数列，它包含<code>[0..=N]</code>中的N个数，找到其中缺少的那个数</p>
+<p>解法：根据性质4，<code>1..=N</code>索引值的异或和与当前所有数字的异或和做异或运算就是缺失的数字</p>
+<blockquote>
+<p>另一种方法：直接用累加和公式算出总数，减去当前的数就是结果</p>
+</blockquote>
+<h3 id="一个数列中某个数出现奇数次其余数出现偶数次返回出现奇数次的数"><a class="header" href="#一个数列中某个数出现奇数次其余数出现偶数次返回出现奇数次的数">一个数列中，某个数出现奇数次，其余数出现偶数次，返回出现奇数次的数</a></h3>
+<p>解法：答案是整个数列的异或和，因为出现偶数次的数异或和都是0，奇数次的数异或和是它自己</p>
+<h3 id="一个数列中两个数出现奇数次其余数出现偶数次返回两个出现奇数次的数"><a class="header" href="#一个数列中两个数出现奇数次其余数出现偶数次返回两个出现奇数次的数">一个数列中，两个数出现奇数次，其余数出现偶数次，返回两个出现奇数次的数</a></h3>
+<blockquote>
+<p><strong>Brian Kernighans算法</strong></p>
+<p>求一个数<code>x</code>的二进制形式最右侧位数为1的数，步骤是先对<code>x</code>取反，再加1，再与原数做<code>&amp;</code>运算，由于取反加一的操作是一个数的相反数，所以形式为<code>DigitNumber = x &amp; (-x)</code></p>
+</blockquote>
+<p>解法：给数列做一个异或和，结果是两个数的异或和，然后找这个结果最右侧为1的位数，由于A、B一定不相同（如果相同就与题目矛盾，即一个数出现了偶数次），所以A、B在那一位一定不一样，此时只要使用仅留这个位数为1的数，所以只要对数列中每个那一位为0的数做异或和，就可以得到A或者B的值，然后就算出了另一个的值</p>
+<h3 id="一个数列中一个数出现少于m次其余数出现m次找出出现次数少于m的数"><a class="header" href="#一个数列中一个数出现少于m次其余数出现m次找出出现次数少于m的数">一个数列中，一个数出现少于m次，其余数出现m次，找出出现次数少于m的数</a></h3>
+<p>解法：每个数出现m次的含义就是每个数的各个位上的0或1出现m次，那么唯一出现次数少于m次的数就会让每一位上的0/1出现次数少于m的倍数，所以只要按位数统计词频，即每一位上1出现的次数，最后遍历词频表，如果该位出现的1的次数不是m的倍数，那么要寻找的数在该位上一定是1，遍历完构建的新数就是要查找的数</p>
 
                     </main>
 
