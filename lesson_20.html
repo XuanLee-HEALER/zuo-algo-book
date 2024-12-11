@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>异或运算的骚操作 - Zuo Algorithm Book</title>
+        <title>位运算的骚操作 - Zuo Algorithm Book</title>
 
 
         <!-- Custom HTML head -->
@@ -152,98 +152,78 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="异或运算的骚操作"><a class="header" href="#异或运算的骚操作">异或运算的骚操作</a></h1>
-<p>举例题目：一个袋子中有<code>a</code>个白球和<code>b</code>和黑球，每次拿出两个球，如果两个球颜色相同，则往袋子中新放一个白球，否则放一个黑球，那么当最终袋子只剩一个球时，这个球是白球或黑球的概率用<code>a</code>和<code>b</code>如何表示</p>
-<p>解题思路：假设白球表示<code>0</code>、黑球表示<code>1</code>，将每次操作看作一个异或运算（相同为0，不同为1），并且生成一个结果，那么问题的结果就是所有球表示的数字的异或和，所有结果和白球的数量无关，当黑球数量为奇数时，一定会剩一个黑球，否则会剩一个白球。这个问题使用白黑球展示了N个一位二进制数的异或运算结果</p>
-<h2 id="异或运算的性质"><a class="header" href="#异或运算的性质">异或运算的性质</a></h2>
-<ol>
-<li>异或运算就是获取两个数的<strong>无进位相加</strong>结果</li>
-<li>异或运算满足交换律和结合律。在异或运算中，运算顺序不影响结果</li>
-<li><code>0^N=N</code>和<code>N^N=0</code></li>
-<li>一批数字的一部分的异或和为<code>a</code>，总异或和为<code>b</code>，那么剩下一部分的异或和就是<code>c=a^b</code></li>
-</ol>
-<p>⚠️性质1最重要，其余性质可以通过性质1推出。性质4出的考题最多</p>
-<h2 id="异或运算相关题目"><a class="header" href="#异或运算相关题目">异或运算相关题目</a></h2>
-<h3 id="交换两个数"><a class="header" href="#交换两个数">交换两个数</a></h3>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>fn exchange_2_nums(a: &amp;mut i32, b: &amp;mut i32) {
-    // 如果 a^b=c，此时a=c
-    *a ^= *b;
-    // 此时 b=b^c=a
-    *b ^= *a;
-    // 此时 a=c^b=a
-    *a ^= *b;
-}
-<span class="boring">}</span></code></pre></pre>
-<p>❗️这种交换方式如果两个数在同一个内存地址，即两个数的值相同，那么第一次异或操作结果就是0，无法进行值的交换且会将自己改为0，所以在数组中交换位置<strong>不推荐</strong>用这种方式</p>
-<h3 id="不用任何判断和比较语句返回两个数的最大值"><a class="header" href="#不用任何判断和比较语句返回两个数的最大值">不用任何判断和比较语句，返回两个数的最大值</a></h3>
-<p>主要思路是使用符号位转化为对两个值相乘的系数，分别为<code>0</code>和<code>1</code>，达到返回最大值的效果</p>
-<h4 id="不考虑溢出"><a class="header" href="#不考虑溢出">不考虑溢出</a></h4>
-<pre><code class="language-rust ignore">fn flip(mut n: i32) -&gt; i32 {
-    n ^= 1;
+                        <h1 id="位运算的骚操作"><a class="header" href="#位运算的骚操作">位运算的骚操作</a></h1>
+<p>位运算操作的常数时间非常好，仅次于赋值操作</p>
+<h2 id="如何判断一个数是否为2的幂"><a class="header" href="#如何判断一个数是否为2的幂">如何判断一个数是否为2的幂</a></h2>
+<p>解法：因为如果一个数是2的幂次，那么这个数的二进制表示中只会包含一个1（负数不可能是2的幂），所以只要使用<code>Brian Kernighans</code>算法得到数字最右侧位数的1表示的数字，和原本的数进行比较，判断是否相等即可</p>
+<h2 id="如何判断一个数是否为3的幂"><a class="header" href="#如何判断一个数是否为3的幂">如何判断一个数是否为3的幂</a></h2>
+<p>解法：首先3的幂次一定不是一个负数，且3的幂次一定只包含3这个唯一的质数，那么判断这个数是否为3的幂只需要使用整数范围内3幂次最大的数对这个数取模，可以根据整数的取值范围试出这个数，如果结果为0那么这个数字就是3的幂次</p>
+<h2 id="已知n为非负数非必要条件找到大于等于n的最小的值为2的幂次的数"><a class="header" href="#已知n为非负数非必要条件找到大于等于n的最小的值为2的幂次的数">已知N为非负数（非必要条件），找到大于等于N的最小的值为2的幂次的数</a></h2>
+<p>解法：如果N为负数或0，答案就是0。如果N大于0，那么只要把N的二进制形式最左侧的1的右侧全部改成1，然后加1就是答案，需要处理N本身是2的幂次的情况，所以要先进行<code>N = N-1</code>的处理</p>
+<pre><code class="language-rust ignore">fn nearest_power_of_2(n: i32) -&gt; i32 {
+    if n &lt;= 0 {
+        0
+    } else {
+        let mut n = n - 1;
+        // n的最左的1会将后面的位更新位1
+        n |= n &gt;&gt; 1;
+        // 前两位更新后两位，后面保证32位整数最左侧1的右边全部更新位1
+        n |= n &gt;&gt; 2;
+        n |= n &gt;&gt; 4;
+        n |= n &gt;&gt; 8;
+        n |= n &gt;&gt; 16;
+        n + 1
+    }
+}</code></pre>
+<h2 id="在范围xy上x和y都是非负数得到所有数的操作的结果"><a class="header" href="#在范围xy上x和y都是非负数得到所有数的操作的结果">在范围[x..=y]上,x和y都是非负数，得到所有数的&amp;操作的结果</a></h2>
+<p>解法：不能直接遍历，因为遍历可能会很慢（可能题目给定的范围很大）。分析题目可知，所有数字的二进制位上，只要有<code>0</code>出现，那么那一位的最终结果就是<code>0</code>，所以只要确定哪些位是<code>0</code>就可以快速算出结果。如果<code>x == y</code>，那么结果就是<code>y</code>，否则<code>y-1</code>一定在<code>[x..=y-1]</code>上，<code>y</code>和<code>y-1</code>做<code>&amp;</code>操作就会让<code>y</code>的最后一位1改为0，将这个新值更新为<code>y</code>，重复此过程直到<code>y &gt; x</code></p>
+<pre><code class="language-rust ignore">fn x_y_bit_and(x: i32, y: i32) -&gt; i32 {
+    let (x, mut y) = (x, y);
+    while y &gt; x {
+        y &amp;= y - 1;
+    }
+    x &amp; y
+}</code></pre>
+<h2 id="逆序一个二进制数"><a class="header" href="#逆序一个二进制数">✨逆序一个二进制数</a></h2>
+<p>解法：对一个二进制数进行分组，先每组一个，然后交换，然后每组两个，交换。最后每组16个，交换完成</p>
+<pre><code class="language-rust ignore">fn reverse_bit(n: u32) -&gt; u32 {
+    let mut n = n;
+    // 第一次每两位一组，交换顺序
+    n = (n &amp; 0xaaaaaaaa) &gt;&gt; 1 | (n &amp; 0x55555555) &lt;&lt; 1;
+    // 第二次每四位一组，交换顺序
+    n = (n &amp; 0xcccccccc) &gt;&gt; 2 | (n &amp; 0x33333333) &lt;&lt; 2;
+    // 第三次每八位一组，交换顺序
+    n = (n &amp; 0xf0f0f0f0) &gt;&gt; 4 | (n &amp; 0x0f0f0f0f) &lt;&lt; 4;
+    // 第四次每十六位一组，交换顺序
+    n = (n &amp; 0xff00ff00) &gt;&gt; 8 | (n &amp; 0x00ff00ff) &lt;&lt; 8;
+    // 最后交换前十六位和后十六位
+    n.rotate_left(16)
+}</code></pre>
+<h2 id="查找一个数的二进制形式中存在几个1"><a class="header" href="#查找一个数的二进制形式中存在几个1">✨查找一个数的二进制形式中存在几个1</a></h2>
+<p>解法：对一个二进制数进行分组，将原数字的含义表示为每组一个，记录<code>1</code>出现的次数，因为如果该位上是1，正好表示1出现了1次，0表示1出现了0次。然后合并组，每组两位记录<code>1</code>出现的次数，然后4个、8个、16个、32个，返回结果</p>
+<p>⚠️rust实现时的加法要使用<code>wrapping_add</code>防止溢出报错，由于是位运算所以不影响结果</p>
+<pre><code class="language-rust ignore">fn bit_1_num(n: i32) -&gt; i32 {
+    let mut n = n;
+    // 后面的与操作(n &gt;&gt; 1) &amp; (0x7fffffff)是为了保证右移后的符号位正确，rust的右移都是带符号的
+    // 从1个1组计算为2个1组
+    n = (n &amp; (0x55555555)).wrapping_add((n &gt;&gt; 1) &amp; (0x7fffffff) &amp; (0x55555555));
+    n = (n &amp; (0x33333333)).wrapping_add((n &gt;&gt; 2) &amp; (0x3fffffff) &amp; (0x33333333));
+    n = (n &amp; (0x0f0f0f0f)).wrapping_add((n &gt;&gt; 4) &amp; (0x0fffffff) &amp; (0x0f0f0f0f));
+    n = (n &amp; (0x00ff00ff)).wrapping_add((n &gt;&gt; 8) &amp; (0x00ffffff) &amp; (0x00ff00ff));
+    n = (n &amp; (0x0000ffff)).wrapping_add((n &gt;&gt; 16) &amp; (0x0000ffff) &amp; (0x0000ffff));
     n
-}
-
-fn sign(n: i32) -&gt; i32 {
-    (n &gt;&gt; 31) &amp; 1
-}
-
-fn max_val_1(a: i32, b: i32) -&gt; i32 {
-    // 这里的结果可能溢出！
-    let c = a - b;
-    let c_sign = sign(c);
-    // 如果c_sign是1，c为负数，则a更小，ret_a应该为0，返回b，反之亦然
-    let ret_a = flip(c_sign);
-    ret_a * a + c_sign * b
 }</code></pre>
-<h4 id="考虑溢出"><a class="header" href="#考虑溢出">考虑溢出</a></h4>
-<pre><code class="language-rust ignore">fn max_val_2(a: i32, b: i32) -&gt; i32 {
-    // 这里不会溢出
-    let c = a.wrapping_sub(b);
-    // 拿到符号
-    let c_sign = sign(c);
-
-    let a_sign = sign(a);
-    let b_sign = sign(b);
-    // a b符号相同，c不会溢出
-    // a b符号不同，只要看a是不是正数
-    let diff_s = a_sign ^ b_sign;
-    let same_s = flip(diff_s);
-    // 决定是否为a的条件是
-    // 如果a b符号相同，diff_s=0，只要看差的符号 same_s*flip(c_sign)，如果是负数表示a更小，所以需要翻转
-    // 如果a b符号不同，那么差的符号不看，same_s=0，只要看a是否为正数，diff_s*flip(a_sign)，如果a是正数，那么需要保留，所以需要翻转
-    let ret_a = diff_s * flip(a_sign) + same_s * flip(c_sign);
-    ret_a * a + flip(ret_a) * b
-}</code></pre>
-<h3 id="找到缺失的数字"><a class="header" href="#找到缺失的数字">找到缺失的数字</a></h3>
-<p>问题描述：有一长度为N的数列，它包含<code>[0..=N]</code>中的N个数，找到其中缺少的那个数</p>
-<p>解法：根据性质4，<code>1..=N</code>索引值的异或和与当前所有数字的异或和做异或运算就是缺失的数字</p>
-<blockquote>
-<p>另一种方法：直接用累加和公式算出总数，减去当前的数就是结果</p>
-</blockquote>
-<h3 id="一个数列中某个数出现奇数次其余数出现偶数次返回出现奇数次的数"><a class="header" href="#一个数列中某个数出现奇数次其余数出现偶数次返回出现奇数次的数">一个数列中，某个数出现奇数次，其余数出现偶数次，返回出现奇数次的数</a></h3>
-<p>解法：答案是整个数列的异或和，因为出现偶数次的数异或和都是0，奇数次的数异或和是它自己</p>
-<h3 id="一个数列中两个数出现奇数次其余数出现偶数次返回两个出现奇数次的数"><a class="header" href="#一个数列中两个数出现奇数次其余数出现偶数次返回两个出现奇数次的数">一个数列中，两个数出现奇数次，其余数出现偶数次，返回两个出现奇数次的数</a></h3>
-<blockquote>
-<p><strong>Brian Kernighans算法</strong></p>
-<p>求一个数<code>x</code>的二进制形式最右侧位数为1的数，步骤是先对<code>x</code>取反，再加1，再与原数做<code>&amp;</code>运算，由于取反加一的操作是一个数的相反数，所以形式为<code>DigitNumber = x &amp; (-x)</code></p>
-</blockquote>
-<p>解法：给数列做一个异或和，结果是两个数的异或和，然后找这个结果最右侧为1的位数，由于A、B一定不相同（如果相同就与题目矛盾，即一个数出现了偶数次），所以A、B在那一位一定不一样，此时只要使用仅留这个位数为1的数，所以只要对数列中每个那一位为0的数做异或和，就可以得到A或者B的值，然后就算出了另一个的值</p>
-<h3 id="一个数列中一个数出现少于m次其余数出现m次找出出现次数少于m的数"><a class="header" href="#一个数列中一个数出现少于m次其余数出现m次找出出现次数少于m的数">一个数列中，一个数出现少于m次，其余数出现m次，找出出现次数少于m的数</a></h3>
-<p>解法：每个数出现m次的含义就是每个数的各个位上的0或1出现m次，那么唯一出现次数少于m次的数就会让每一位上的0/1出现次数少于m的倍数，所以只要按位数统计词频，即每一位上1出现的次数，最后遍历词频表，如果该位出现的1的次数不是m的倍数，那么要寻找的数在该位上一定是1，遍历完构建的新数就是要查找的数</p>
+<h2 id="总结"><a class="header" href="#总结">总结</a></h2>
+<p>使用位运算解决一些问题的方式可以当解题模版用，不用强求处处都使用这种方法</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="lesson_18.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="lesson_19.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="lesson_20.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                                <i class="fa fa-angle-right"></i>
-                            </a>
 
                         <div style="clear: both"></div>
                     </nav>
@@ -251,13 +231,10 @@ fn max_val_1(a: i32, b: i32) -&gt; i32 {
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="lesson_18.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="lesson_19.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="lesson_20.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                        <i class="fa fa-angle-right"></i>
-                    </a>
             </nav>
 
         </div>

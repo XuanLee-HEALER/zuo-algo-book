@@ -1310,6 +1310,69 @@ fn max_val_1(a: i32, b: i32) -&gt; i32 {
 <p>解法：给数列做一个异或和，结果是两个数的异或和，然后找这个结果最右侧为1的位数，由于A、B一定不相同（如果相同就与题目矛盾，即一个数出现了偶数次），所以A、B在那一位一定不一样，此时只要使用仅留这个位数为1的数，所以只要对数列中每个那一位为0的数做异或和，就可以得到A或者B的值，然后就算出了另一个的值</p>
 <h3 id="一个数列中一个数出现少于m次其余数出现m次找出出现次数少于m的数"><a class="header" href="#一个数列中一个数出现少于m次其余数出现m次找出出现次数少于m的数">一个数列中，一个数出现少于m次，其余数出现m次，找出出现次数少于m的数</a></h3>
 <p>解法：每个数出现m次的含义就是每个数的各个位上的0或1出现m次，那么唯一出现次数少于m次的数就会让每一位上的0/1出现次数少于m的倍数，所以只要按位数统计词频，即每一位上1出现的次数，最后遍历词频表，如果该位出现的1的次数不是m的倍数，那么要寻找的数在该位上一定是1，遍历完构建的新数就是要查找的数</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="位运算的骚操作"><a class="header" href="#位运算的骚操作">位运算的骚操作</a></h1>
+<p>位运算操作的常数时间非常好，仅次于赋值操作</p>
+<h2 id="如何判断一个数是否为2的幂"><a class="header" href="#如何判断一个数是否为2的幂">如何判断一个数是否为2的幂</a></h2>
+<p>解法：因为如果一个数是2的幂次，那么这个数的二进制表示中只会包含一个1（负数不可能是2的幂），所以只要使用<code>Brian Kernighans</code>算法得到数字最右侧位数的1表示的数字，和原本的数进行比较，判断是否相等即可</p>
+<h2 id="如何判断一个数是否为3的幂"><a class="header" href="#如何判断一个数是否为3的幂">如何判断一个数是否为3的幂</a></h2>
+<p>解法：首先3的幂次一定不是一个负数，且3的幂次一定只包含3这个唯一的质数，那么判断这个数是否为3的幂只需要使用整数范围内3幂次最大的数对这个数取模，可以根据整数的取值范围试出这个数，如果结果为0那么这个数字就是3的幂次</p>
+<h2 id="已知n为非负数非必要条件找到大于等于n的最小的值为2的幂次的数"><a class="header" href="#已知n为非负数非必要条件找到大于等于n的最小的值为2的幂次的数">已知N为非负数（非必要条件），找到大于等于N的最小的值为2的幂次的数</a></h2>
+<p>解法：如果N为负数或0，答案就是0。如果N大于0，那么只要把N的二进制形式最左侧的1的右侧全部改成1，然后加1就是答案，需要处理N本身是2的幂次的情况，所以要先进行<code>N = N-1</code>的处理</p>
+<pre><code class="language-rust ignore">fn nearest_power_of_2(n: i32) -&gt; i32 {
+    if n &lt;= 0 {
+        0
+    } else {
+        let mut n = n - 1;
+        // n的最左的1会将后面的位更新位1
+        n |= n &gt;&gt; 1;
+        // 前两位更新后两位，后面保证32位整数最左侧1的右边全部更新位1
+        n |= n &gt;&gt; 2;
+        n |= n &gt;&gt; 4;
+        n |= n &gt;&gt; 8;
+        n |= n &gt;&gt; 16;
+        n + 1
+    }
+}</code></pre>
+<h2 id="在范围xy上x和y都是非负数得到所有数的操作的结果"><a class="header" href="#在范围xy上x和y都是非负数得到所有数的操作的结果">在范围[x..=y]上,x和y都是非负数，得到所有数的&amp;操作的结果</a></h2>
+<p>解法：不能直接遍历，因为遍历可能会很慢（可能题目给定的范围很大）。分析题目可知，所有数字的二进制位上，只要有<code>0</code>出现，那么那一位的最终结果就是<code>0</code>，所以只要确定哪些位是<code>0</code>就可以快速算出结果。如果<code>x == y</code>，那么结果就是<code>y</code>，否则<code>y-1</code>一定在<code>[x..=y-1]</code>上，<code>y</code>和<code>y-1</code>做<code>&amp;</code>操作就会让<code>y</code>的最后一位1改为0，将这个新值更新为<code>y</code>，重复此过程直到<code>y &gt; x</code></p>
+<pre><code class="language-rust ignore">fn x_y_bit_and(x: i32, y: i32) -&gt; i32 {
+    let (x, mut y) = (x, y);
+    while y &gt; x {
+        y &amp;= y - 1;
+    }
+    x &amp; y
+}</code></pre>
+<h2 id="逆序一个二进制数"><a class="header" href="#逆序一个二进制数">✨逆序一个二进制数</a></h2>
+<p>解法：对一个二进制数进行分组，先每组一个，然后交换，然后每组两个，交换。最后每组16个，交换完成</p>
+<pre><code class="language-rust ignore">fn reverse_bit(n: u32) -&gt; u32 {
+    let mut n = n;
+    // 第一次每两位一组，交换顺序
+    n = (n &amp; 0xaaaaaaaa) &gt;&gt; 1 | (n &amp; 0x55555555) &lt;&lt; 1;
+    // 第二次每四位一组，交换顺序
+    n = (n &amp; 0xcccccccc) &gt;&gt; 2 | (n &amp; 0x33333333) &lt;&lt; 2;
+    // 第三次每八位一组，交换顺序
+    n = (n &amp; 0xf0f0f0f0) &gt;&gt; 4 | (n &amp; 0x0f0f0f0f) &lt;&lt; 4;
+    // 第四次每十六位一组，交换顺序
+    n = (n &amp; 0xff00ff00) &gt;&gt; 8 | (n &amp; 0x00ff00ff) &lt;&lt; 8;
+    // 最后交换前十六位和后十六位
+    n.rotate_left(16)
+}</code></pre>
+<h2 id="查找一个数的二进制形式中存在几个1"><a class="header" href="#查找一个数的二进制形式中存在几个1">✨查找一个数的二进制形式中存在几个1</a></h2>
+<p>解法：对一个二进制数进行分组，将原数字的含义表示为每组一个，记录<code>1</code>出现的次数，因为如果该位上是1，正好表示1出现了1次，0表示1出现了0次。然后合并组，每组两位记录<code>1</code>出现的次数，然后4个、8个、16个、32个，返回结果</p>
+<p>⚠️rust实现时的加法要使用<code>wrapping_add</code>防止溢出报错，由于是位运算所以不影响结果</p>
+<pre><code class="language-rust ignore">fn bit_1_num(n: i32) -&gt; i32 {
+    let mut n = n;
+    // 后面的与操作(n &gt;&gt; 1) &amp; (0x7fffffff)是为了保证右移后的符号位正确，rust的右移都是带符号的
+    // 从1个1组计算为2个1组
+    n = (n &amp; (0x55555555)).wrapping_add((n &gt;&gt; 1) &amp; (0x7fffffff) &amp; (0x55555555));
+    n = (n &amp; (0x33333333)).wrapping_add((n &gt;&gt; 2) &amp; (0x3fffffff) &amp; (0x33333333));
+    n = (n &amp; (0x0f0f0f0f)).wrapping_add((n &gt;&gt; 4) &amp; (0x0fffffff) &amp; (0x0f0f0f0f));
+    n = (n &amp; (0x00ff00ff)).wrapping_add((n &gt;&gt; 8) &amp; (0x00ffffff) &amp; (0x00ff00ff));
+    n = (n &amp; (0x0000ffff)).wrapping_add((n &gt;&gt; 16) &amp; (0x0000ffff) &amp; (0x0000ffff));
+    n
+}</code></pre>
+<h2 id="总结"><a class="header" href="#总结">总结</a></h2>
+<p>使用位运算解决一些问题的方式可以当解题模版用，不用强求处处都使用这种方法</p>
 
                     </main>
 
