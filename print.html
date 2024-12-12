@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html lang="zh" class="light sidebar-visible" dir="ltr">
+<html lang="zh" class="latte sidebar-visible" dir="ltr">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
@@ -24,18 +24,20 @@
         <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
         <link rel="stylesheet" href="fonts/fonts.css">
 
+
         <!-- Highlight.js Stylesheets -->
         <link rel="stylesheet" href="highlight.css">
         <link rel="stylesheet" href="tomorrow-night.css">
         <link rel="stylesheet" href="ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="./theme/catppuccin.css">
 
 
         <!-- Provide site root to javascript -->
         <script>
             var path_to_root = "";
-            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "mocha" : "latte";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc.js"></script>
@@ -64,7 +66,7 @@
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
             const html = document.documentElement;
-            html.classList.remove('light')
+            html.classList.remove('latte')
             html.classList.add(theme);
             html.classList.add("js");
         </script>
@@ -110,11 +112,10 @@
                             <i class="fa fa-paint-brush"></i>
                         </button>
                         <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
-                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="latte">Latte</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="frappe">Frappé</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="macchiato">Macchiato</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mocha">Mocha</button></li>
                         </ul>
                         <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
                             <i class="fa fa-search"></i>
@@ -158,6 +159,7 @@
 <p>这本书记录我学习左神算法课过程中的笔记和一些想法，章节基本按照B站课程的顺序排列。之前的笔记在项目的README里面越来越长，查看也不太方便，就想整理为这种电子书的结构。</p>
 <p>左神原repo的算法实现都是Java写的，因为我现在的工作主力语言不是rust，但是我又十分喜欢这门语言，所以我的实现基本上都用rust来写（除了链表相关题目和一些OJ不支持rust的题目使用了C和C++）。不过编程语言只是实现算法的一种手段，用什么都可以，如果追求性能推荐使用静态语言（C/C++），其他情况只要顺手即可。算法的核心永远是解决问题的思路！</p>
 <p>虽然我觉得现在自己才接触算法，乃至算法竞赛相关的内容太晚了，但是从追求进入大厂的目标到现在有些乐在其中的过程，我还是很庆幸接触了这门课程。希望能在之后的工作和学习中，永远不丢掉对算法的学习热情。</p>
+<p>到课程学习中段，随着学习到的数据结构和算法的数量越来越多，产生了一种茫然若失的感觉。看到新的题目还是没有特别明确的解题思路，之前学习过的内容也有些淡忘，此时我开始整理课程笔记。在这个过程我发现看到之前的题目不再是一头雾水，看到自己写的实现代码也可以很快理解思路，这可以证明我在学习过程中确实有所成长，这也让我坚定了一个念头：先尽量学习，将这些庞大的知识量吞进来，总会有消化的一天。</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="二进制"><a class="header" href="#二进制">二进制</a></h1>
 <h2 id="二进制表示数字"><a class="header" href="#二进制表示数字">二进制表示数字</a></h2>
 <p>二进制数每一位（bit）可以表示<code>0</code>和<code>1</code>，计算一个二进制数的十进制表示就是从低位到高位累加<code>2^i</code>得到结果。比如<code>1001</code>，计算十进制数为<code>1 * 2^0 + 0 * 2^1 + 0 * 2^2 + 1 * 2^3 = 9</code></p>
@@ -1373,6 +1375,121 @@ fn max_val_1(a: i32, b: i32) -&gt; i32 {
 }</code></pre>
 <h2 id="总结"><a class="header" href="#总结">总结</a></h2>
 <p>使用位运算解决一些问题的方式可以当解题模版用，不用强求处处都使用这种方法</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="位图"><a class="header" href="#位图">位图</a></h1>
+<p>位图是一种集合结构，如果要表示的数据的范围是<strong>连续</strong>且固定的，那么位图可以<strong>在常数时间内执行数据的增删改查</strong>，并且只使用很少的空间（比哈希表少）</p>
+<p>位图可以用任意整数类型的数组来存放值，在每个数字的二进制位上，<code>0</code>表示存在，<code>1</code>表示不存在，取值和存值都是用位运算。因为是用每个位来表示一个唯一数据，所以可以极大节省空间，相当于一个32位的整数可以表示32个数据</p>
+<p>位图需要提供的操作接口如下（以保存0～N-1范围的数字）</p>
+<pre><code class="language-rust ignore">struct Bitset {
+    set: Vec&lt;i32&gt;,
+}
+
+impl Bitset {
+    // 构建一个位图，保存0~n-1的数字
+    fn new(n: i32) -&gt; Self {
+        Self {
+            set: vec![0; (n + 31) / 32],
+        }
+    }
+    // 添加一个数
+    fn add(&amp;mut self, n: i32) {
+        self.set[(num / 32) as usize] |= 1 &lt;&lt; (num % 32);
+    }
+    // 删除一个数
+    fn remove(&amp;mut self, n: i32) {
+        self.set[(num / 32) as usize] &amp;= !(1 &lt;&lt; (num % 32));
+    }
+    // 存在删除，不存在添加
+    fn reverse(&amp;mut self, n: i32) {
+        self.set[(num / 32) as usize] ^= 1 &lt;&lt; (num % 32);
+    }
+    // 查询一个数
+    fn query(&amp;self, n: i32) -&gt; bool {
+        (self.set[(num / 32) as usize] &gt;&gt; (num % 32)) &amp; 1 == 1
+    }
+}</code></pre>
+<blockquote>
+<p>两个非负数做除法并向上取整可以使用<code>(a+b-1)/b</code>，这个式子表示，如果<code>a</code>是<code>b</code>的整数倍加一个余数，那么<code>(a+b-1)</code>就一定会多一个<code>b</code>，所以向上取整，如果<code>a</code>只是<code>b</code>的整数倍，那么<code>(a+b-1)</code>还是不会多一个<code>b</code>,<code>-1</code>的操作是为了合并两种情况</p>
+</blockquote>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="位运算实现加减乘除"><a class="header" href="#位运算实现加减乘除">位运算实现加减乘除</a></h1>
+<h2 id="加法"><a class="header" href="#加法">加法</a></h2>
+<p>两个数相加等同于两个数的无进位相加结果和进位信息结果相加，直到进位信息为0。无进位相加等同于<code>^</code>操作，进位信息是两个数做<code>&amp;</code>操作，然后左移一位</p>
+<pre><pre class="playground"><code class="language-rust editable edition2021">let bit_add = |mut a: i32, mut b: i32| -&gt; i32 {
+    let mut res = a;
+    while b != 0 {
+        // 无进位相加
+        res = a ^ b;
+        // 进位信息
+        b = (a &amp; b) &lt;&lt; 1;
+        a = res;
+        // 此时 a b 相加已经转化为无进位相加结果和进位信息结果相加的结果
+    }
+    res
+};
+println!("5 + 6 = {}", bit_add(5, 6));</code></pre></pre>
+<h2 id="减法"><a class="header" href="#减法">减法</a></h2>
+<p><code>(a+b)</code>等同于<code>(a+(-b))</code>，求一个数的负数的方法是<code>!a+1</code>，再利用二进制加法实现最初的减法<code>bit_add(a, bit_neg(b))</code></p>
+<pre><code class="language-rust ignore">fn bit_neg(a: i32) -&gt; i32 {
+    // 仅使用位运算版本的加法
+    bit_add(!a, 1)
+}
+
+fn bit_sub(a: i32, b: i32) -&gt; i32 {
+    bit_add(a, bit_neg(b))
+}</code></pre>
+<h2 id="乘法"><a class="header" href="#乘法">乘法</a></h2>
+<p>和十进制乘法相同，对于<code>a*b</code>，是<code>b</code>的二进制上为<code>1</code>的位置，对应<code>a</code>的个数的累加和，</p>
+<p>⚠️如果没有无符号右移操作符，如果<code>b</code>是负数，右移之后最左边的位需要修改为0</p>
+<pre><code class="language-rust ignore">fn bit_multi(mut a: i32, mut b: i32) -&gt; i32 {
+    let mut res = 0;
+    while b != 0 {
+        if b &amp; 1 != 0 {
+            res = bit_add(res, a);
+        }
+        a &lt;&lt;= 1;
+        b = (b &gt;&gt; 1) &amp; 0x7fffffff;
+    }
+    res
+}</code></pre>
+<h2 id="除法"><a class="header" href="#除法">除法</a></h2>
+<p>对于两个32位的非负数除法（带符号也可以舍弃掉符号位进行计算），等同于判断<code>a</code>是否含有<code>b*2^30</code>这个数，如果包含，则结果的第<code>32</code>位就应该是1，然后判断<code>a-b*2^30</code>之后的结果是否包含<code>b*2^29</code>，以此类推直到判断中间结果是否包含<code>b*2^0</code>结束</p>
+<p>当判断<code>a&gt;=b*2^30</code>时，为了防止<code>b</code>左移溢出，可以改为<code>a/2^30&gt;=b</code>。输入参数不能是整数最小值，因为在求负数的时候取反变成<code>0</code>。如果不限制输入参数限制需要对特例进行处理</p>
+<pre><code class="language-rust ignore">/// a,b不能是整数最小值
+fn bit_div(a: i32, b: i32) -&gt; i32 {
+    let mut ca = if a &gt;= 0 { a } else { bit_neg(a) };
+    let cb = if b &gt;= 0 { b } else { bit_neg(b) };
+    let mut res = 0;
+    for i in (0..31).rev() {
+        if ca &gt;&gt; i &gt;= cb {
+            res |= 1 &lt;&lt; i;
+            ca = bit_sub(ca, cb &lt;&lt; i);
+        }
+    }
+
+    if (a &gt; 0) ^ (b &gt; 0) {
+        bit_neg(res)
+    } else {
+        res
+    }
+}
+
+/// 不限制a,b的范围
+fn bit_gen_div(a: i32, b: i32) -&gt; i32 {
+    const I32_MIN: i32 = i32::MIN;
+    const OFFSET: i32 = 1;
+    match (a, b) {
+        (I32_MIN, I32_MIN) =&gt; 1,
+        (_, I32_MIN) =&gt; 0,
+        (I32_MIN, -1) =&gt; i32::MAX,
+        (I32_MIN, x) =&gt; {
+            if x &gt;= 0 {
+                bit_div(bit_add(I32_MIN, x), x) - OFFSET
+            } else {
+                bit_div(bit_sub(I32_MIN, x), x) + OFFSET
+            }
+        }
+        (a, b) =&gt; bit_div(a, b),
+    }
+}</code></pre>
 
                     </main>
 
@@ -1398,6 +1515,11 @@ fn max_val_1(a: i32, b: i32) -&gt; i32 {
             window.playground_copyable = true;
         </script>
 
+        <script src="ace.js"></script>
+        <script src="editor.js"></script>
+        <script src="mode-rust.js"></script>
+        <script src="theme-dawn.js"></script>
+        <script src="theme-tomorrow_night.js"></script>
 
         <script src="elasticlunr.min.js"></script>
         <script src="mark.min.js"></script>
