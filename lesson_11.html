@@ -31,6 +31,7 @@
 
         <!-- Custom theme stylesheets -->
         <link rel="stylesheet" href="./theme/catppuccin.css">
+        <link rel="stylesheet" href="./theme/pagetoc.css">
 
 
         <!-- Provide site root to javascript -->
@@ -153,7 +154,8 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="归并排序"><a class="header" href="#归并排序">归并排序</a></h1>
+                        <div class="content-wrap">
+                            <h1 id="归并排序"><a class="header" href="#归并排序">归并排序</a></h1>
 <p>归并排序的基本逻辑是，对于一个无序数组，先将左边一半数据排好序，然后再将右边一半数据排好序，最后把两个有序子数组按照大小关系进行合并，排序完成</p>
 <p>合并操作（<em>merge</em>）：遍历左右两个有序子数组的元素，谁小拷贝谁到辅助数组中，直到遍历完两个数组，然后将辅助数组的结果更新回原数组</p>
 <p>时间复杂度：<code>O(N*logN)</code>，空间复杂度：<code>O(N)</code>（需要辅助数组）</p>
@@ -234,6 +236,10 @@ fn merge(left: &amp;[i32], right: &amp;[i32]) -&gt; Vec&lt;i32&gt; {
     nums.into()
 }</code></pre>
 
+                        </div>
+                        <div class="sidetoc">
+                            <nav id="pagetoc" class="pagetoc"></nav>
+                        </div>
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
@@ -287,6 +293,7 @@ fn merge(left: &amp;[i32], right: &amp;[i32]) -&gt; Vec&lt;i32&gt; {
         <!-- Custom JS scripts -->
         <script src="assets/fzf.umd.js"></script>
         <script src="assets/elasticlunr.js"></script>
+        <script src="./theme/pagetoc.js"></script>
 
 
     </div>

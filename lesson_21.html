@@ -31,6 +31,7 @@
 
         <!-- Custom theme stylesheets -->
         <link rel="stylesheet" href="./theme/catppuccin.css">
+        <link rel="stylesheet" href="./theme/pagetoc.css">
 
 
         <!-- Provide site root to javascript -->
@@ -153,7 +154,8 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="位图"><a class="header" href="#位图">位图</a></h1>
+                        <div class="content-wrap">
+                            <h1 id="位图"><a class="header" href="#位图">位图</a></h1>
 <p>位图是一种集合结构，如果要表示的数据的范围是<strong>连续</strong>且固定的，那么位图可以<strong>在常数时间内执行数据的增删改查</strong>，并且只使用很少的空间（比哈希表少）</p>
 <p>位图可以用任意整数类型的数组来存放值，在每个数字的二进制位上，<code>0</code>表示存在，<code>1</code>表示不存在，取值和存值都是用位运算。因为是用每个位来表示一个唯一数据，所以可以极大节省空间，相当于一个32位的整数可以表示32个数据</p>
 <p>位图需要提供的操作接口如下（以保存0～N-1范围的数字）</p>
@@ -189,6 +191,10 @@ impl Bitset {
 <p>两个非负数做除法并向上取整可以使用<code>(a+b-1)/b</code>，这个式子表示，如果<code>a</code>是<code>b</code>的整数倍加一个余数，那么<code>(a+b-1)</code>就一定会多一个<code>b</code>，所以向上取整，如果<code>a</code>只是<code>b</code>的整数倍，那么<code>(a+b-1)</code>还是不会多一个<code>b</code>,<code>-1</code>的操作是为了合并两种情况</p>
 </blockquote>
 
+                        </div>
+                        <div class="sidetoc">
+                            <nav id="pagetoc" class="pagetoc"></nav>
+                        </div>
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
@@ -242,6 +248,7 @@ impl Bitset {
         <!-- Custom JS scripts -->
         <script src="assets/fzf.umd.js"></script>
         <script src="assets/elasticlunr.js"></script>
+        <script src="./theme/pagetoc.js"></script>
 
 
     </div>

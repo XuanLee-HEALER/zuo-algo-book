@@ -31,6 +31,7 @@
 
         <!-- Custom theme stylesheets -->
         <link rel="stylesheet" href="./theme/catppuccin.css">
+        <link rel="stylesheet" href="./theme/pagetoc.css">
 
 
         <!-- Provide site root to javascript -->
@@ -153,13 +154,18 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="随便聊聊"><a class="header" href="#随便聊聊">随便聊聊</a></h1>
+                        <div class="content-wrap">
+                            <h1 id="随便聊聊"><a class="header" href="#随便聊聊">随便聊聊</a></h1>
 <p>⭐️⭐️⭐️<a href="https://space.bilibili.com/8888480"><strong>左神b站主页，推荐关注</strong></a>⭐️⭐️⭐️</p>
 <p>这本书记录我学习左神算法课过程中的笔记和一些想法，章节基本按照B站课程的顺序排列。之前的笔记在项目的README里面越来越长，查看也不太方便，就想整理为这种电子书的结构。</p>
 <p>左神原repo的算法实现都是Java写的，因为我现在的工作主力语言不是rust，但是我又十分喜欢这门语言，所以我的实现基本上都用rust来写（除了链表相关题目和一些OJ不支持rust的题目使用了C和C++）。不过编程语言只是实现算法的一种手段，用什么都可以，如果追求性能推荐使用静态语言（C/C++），其他情况只要顺手即可。算法的核心永远是解决问题的思路！</p>
 <p>虽然我觉得现在自己才接触算法，乃至算法竞赛相关的内容太晚了，但是从追求进入大厂的目标到现在有些乐在其中的过程，我还是很庆幸接触了这门课程。希望能在之后的工作和学习中，永远不丢掉对算法的学习热情。</p>
 <p>到课程学习中段，随着学习到的数据结构和算法的数量越来越多，产生了一种茫然若失的感觉。看到新的题目还是没有特别明确的解题思路，之前学习过的内容也有些淡忘，此时我开始整理课程笔记。在这个过程我发现看到之前的题目不再是一头雾水，看到自己写的实现代码也可以很快理解思路，这可以证明我在学习过程中确实有所成长，这也让我坚定了一个念头：先尽量学习，将这些庞大的知识量吞进来，总会有消化的一天。</p>
 
+                        </div>
+                        <div class="sidetoc">
+                            <nav id="pagetoc" class="pagetoc"></nav>
+                        </div>
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
@@ -207,6 +213,7 @@
         <!-- Custom JS scripts -->
         <script src="assets/fzf.umd.js"></script>
         <script src="assets/elasticlunr.js"></script>
+        <script src="./theme/pagetoc.js"></script>
 
 
     </div>

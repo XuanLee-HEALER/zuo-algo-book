@@ -31,6 +31,7 @@
 
         <!-- Custom theme stylesheets -->
         <link rel="stylesheet" href="./theme/catppuccin.css">
+        <link rel="stylesheet" href="./theme/pagetoc.css">
 
 
         <!-- Provide site root to javascript -->
@@ -153,7 +154,8 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="二分搜索"><a class="header" href="#二分搜索">二分搜索</a></h1>
+                        <div class="content-wrap">
+                            <h1 id="二分搜索"><a class="header" href="#二分搜索">二分搜索</a></h1>
 <h2 id="有序数列"><a class="header" href="#有序数列">有序数列</a></h2>
 <p>问题描述：在有序数列中找到一个指定数字，如果存在返回它的索引，否则返回<code>-1</code></p>
 <p>解法：二分搜索模版，如果中点不是答案，大于则往左找，小于则往右找，直到终点等于指定数字返回答案，或者左索引大于右索引返回<code>-1</code></p>
@@ -201,6 +203,10 @@
 <h2 id="二分搜索的时间复杂度"><a class="header" href="#二分搜索的时间复杂度">二分搜索的时间复杂度</a></h2>
 <p>二分搜索的时间复杂度是<code>O(logN)</code>，N表示数列的长度，因为每一次循环会将搜索范围缩小一半，所以问题的总规模就是2的搜索次数的次方，例如一个长度为<code>i32::MAX</code>的数列，它的长度为<code>2^31-1</code>，所以最慢经过31次搜索就可以解决问题</p>
 
+                        </div>
+                        <div class="sidetoc">
+                            <nav id="pagetoc" class="pagetoc"></nav>
+                        </div>
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
@@ -254,6 +260,7 @@
         <!-- Custom JS scripts -->
         <script src="assets/fzf.umd.js"></script>
         <script src="assets/elasticlunr.js"></script>
+        <script src="./theme/pagetoc.js"></script>
 
 
     </div>

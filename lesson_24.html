@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>对数器 - Zuo Algorithm Book</title>
+        <title>数据结构设计高频题 - Zuo Algorithm Book</title>
 
 
         <!-- Custom HTML head -->
@@ -155,17 +155,38 @@
                 <div id="content" class="content">
                     <main>
                         <div class="content-wrap">
-                            <h1 id="对数器"><a class="header" href="#对数器">对数器</a></h1>
-<p>对数器是一种验证算法的方法，它的实现步骤大概分为</p>
-<ol>
-<li>分析要解决的问题<code>A</code></li>
-<li>实现一个不考虑时间复杂度的暴力解法<code>S1</code>，最简单的思路基本都是正确的，一定要保证这里算法的正确性</li>
-<li>实现几个考虑时间复杂度的优雅解法<code>S2</code>、<code>S3</code>等</li>
-<li>开始创建测试用例，即利用随机数生成的方法生成<strong>符合题目要求的</strong>测试数据</li>
-<li>使用生成的测试数据对几个解法进行测试，小数据量测试</li>
-<li>如果小数据量没有问题，那么逐渐增加数据，直到暴力解法达到无法计算的程度，如果其它更好的解法在短时间内还可以计算出答案，则<em>基本</em>可以确定更好的解法思路是正确的</li>
-<li>如果在测试过程中出现了问题，那么减少数据量，通过打印中间变量/debug的方法，开始查找错误，这个过程中还可以打印原始测试数据，对比不同方法的结果来判断</li>
-</ol>
+                            <h1 id="数据结构设计高频题"><a class="header" href="#数据结构设计高频题">数据结构设计高频题</a></h1>
+<p>实现数据结构相关的题目重点是<strong>细心</strong></p>
+<h2 id="set_all功能的哈希表"><a class="header" href="#set_all功能的哈希表"><code>set_all</code>功能的哈希表</a></h2>
+<p>问题描述：为哈希表结构扩展一个方法<code>set_all(val)</code>，该方法可以将当前哈希表所有的值替换为指定值</p>
+<p>解法：为哈希表中添加的值附带一个次序（时间）信息，并且多记录一个<code>set_all</code>传递的值，在调用<code>set_all</code>的次序之前插入的值被<code>get</code>的时候都返回这个值即可</p>
+<h2 id="实现lru结构"><a class="header" href="#实现lru结构">实现LRU结构</a></h2>
+<blockquote>
+<p>Least Recently Used (LRU) cache，在一个有限容器中，实现读写操作<code>O(1)</code>且符合当容器满时，总是删除上一次使用时间总是距离当前时间最远的元素</p>
+</blockquote>
+<p>问题描述：实现一个LRU结构</p>
+<p>解法：使用哈希表结合双向链表实现。哈希表存储的内容是节点的值和节点在链表中的地址，链表总是满足最新访问的地址在链表尾，最早访问的地址在链表头的性质，在每次<code>get</code>操作后，被访问的节点要更换位置到链表尾</p>
+<p>要求读写操作为<code>O(1)</code>，要优先考虑哈希表结构</p>
+<h2 id="插入删除和获取随机元素时间复杂度均为o1的结构-i"><a class="header" href="#插入删除和获取随机元素时间复杂度均为o1的结构-i">插入、删除和获取随机元素时间复杂度均为<code>O(1)</code>的结构 I</a></h2>
+<p>题目要求：不允许插入重复元素</p>
+<p>解法：不允许插入重复元素表示每个元素在容器中同时都只有一份。保存元素可以使用哈希表，这样在插入和删除时都是<code>O(1)</code>复杂度，然后在一个数组中连续保存数字，确保获取随机元素的时间复杂度也是<code>O(1)</code>，删除元素时保证数组的连续性即可，如果删除元素是最后一个，那么（以动态数组实现为例）直接删除尾部元素，否则将尾部元素替换到被删除的那个元素的位置上。数组的随机读取操作是<code>O(1)</code>时间复杂度</p>
+<h2 id="插入删除和获取随机元素时间复杂度均为o1的结构-ii"><a class="header" href="#插入删除和获取随机元素时间复杂度均为o1的结构-ii">插入、删除和获取随机元素时间复杂度均为<code>O(1)</code>的结构 II</a></h2>
+<p>题目要求：允许插入重复元素</p>
+<p>解法：哈希表保存元素和元素在数组中的索引位置，索引位置可以使用<code>HashSet</code>结构保存，保证删除时的时间复杂度为<code>O(1)</code>，删除元素时如果该元素在哈希表中存在，那么删除它的一个索引位置，如果这是最后一个索引位置，再把整条记录删除，并且保证数组的连续性</p>
+<p>⚠️从<code>HashSet</code>中随机取出一个元素可以使用迭代器方法</p>
+<h2 id="从一个流中获取中位数"><a class="header" href="#从一个流中获取中位数">从一个流中获取中位数</a></h2>
+<blockquote>
+<p>中位数：<strong>将数列从小到大排序</strong>，返回中间的数（奇数返回中间的数，偶数则返回中间两数和的一半）</p>
+</blockquote>
+<p>题目描述：给定一个流，对其包装一个结构体，向外暴露两个接口，分别为获取消费流中的数字和返回当前的中位数</p>
+<p>解法：使用两个堆始终将流中消费的数分为较大部分和较小部分，第一个数字先进大根堆，如果后续元素大于大根堆堆顶元素就进入小根堆，小于等于就进入大根堆，那么流中数字较大部分在小根堆，较小部分在大根堆，如果<strong>两个堆的大小差距超过2</strong>，那么将元素数量多的堆中的堆顶元素放入另一个堆，求中位数时如果两个堆元素数量之和为偶数，就是两个堆的堆顶元素之和除2，否则返回元素数量更多的那个堆的堆顶元素</p>
+<h2 id="最大频率栈"><a class="header" href="#最大频率栈">最大频率栈</a></h2>
+<p>题目描述：实现一个栈结构，它的<code>pop</code>方法总是返回出现频率最高的元素，如果这个元素有多个，那么返回最靠近栈顶的一个</p>
+<p>解法：使用一个哈希表来存储元素的值和词频，在入栈时，先查找它的词频，找到后在二维数组中找到对应的词频（需要将查到的词频+1）数组，把这个元素放进去，增加词频。在出栈时，将二维数组最后的一个元素（数组）中的最后一个元素返回即可，如果删除这个元素后数组长度为0则删除这个数组</p>
+<p>实现思路是，将词频组织成了一个栈（二维数组表示），栈顶永远是词频最高的词，然后每个词频又是一个栈结构，保证了同样词频弹出的依旧是最靠近栈顶的元素，只需要查询时间为<code>O(1)</code>（利用哈希表），就可以实现全操作时间复杂度和栈相同<code>O(1)</code></p>
+<h2 id="实现全部操作时间复杂度为o1的数据结构"><a class="header" href="#实现全部操作时间复杂度为o1的数据结构">实现全部操作时间复杂度为<code>O(1)</code>的数据结构</a></h2>
+<p>题目描述：对于一个保存字符串的容器数据结构，它有增加、减少、获取最大词频和最小词频的字符串四个方法，每个方法的时间复杂度都需要是<code>O(1)</code></p>
+<p>解法：使用一个双向链表保存词频信息，最大词频和最小词频对应双端链表的头尾，每个节点包含表示词频、该词频下有哪些字符串，增加删除时检索字符串对应词频的链表节点需要一个哈希表来保存，由于只需要词频信息，所以链表的每个节点可以是一个<code>HashSet</code>结构</p>
 
                         </div>
                         <div class="sidetoc">
@@ -175,13 +196,10 @@
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="lesson_2.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="lesson_23.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="lesson_4.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                                <i class="fa fa-angle-right"></i>
-                            </a>
 
                         <div style="clear: both"></div>
                     </nav>
@@ -189,13 +207,10 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="lesson_2.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="lesson_23.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="lesson_4.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                        <i class="fa fa-angle-right"></i>
-                    </a>
             </nav>
 
         </div>

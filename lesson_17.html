@@ -31,6 +31,7 @@
 
         <!-- Custom theme stylesheets -->
         <link rel="stylesheet" href="./theme/catppuccin.css">
+        <link rel="stylesheet" href="./theme/pagetoc.css">
 
 
         <!-- Provide site root to javascript -->
@@ -153,7 +154,8 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="基数排序"><a class="header" href="#基数排序">基数排序</a></h1>
+                        <div class="content-wrap">
+                            <h1 id="基数排序"><a class="header" href="#基数排序">基数排序</a></h1>
 <p>排序算法分为两大类</p>
 <ul>
 <li>基于比较的排序：不关心数据特征，只要能<strong>定义元素之间的比较关系</strong>就可以执行，很通用</li>
@@ -208,6 +210,10 @@ fn radix_sort(arr: &amp;mut [i32], n: i32, base: i32) {
 <p>如果是一个包含负数的数组，可以通过找出数组的最小值，然后数组中每个元素减去这个最小值转化为一个非负数组，再进行排序，最后再加上这个最小值</p>
 </blockquote>
 
+                        </div>
+                        <div class="sidetoc">
+                            <nav id="pagetoc" class="pagetoc"></nav>
+                        </div>
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
@@ -261,6 +267,7 @@ fn radix_sort(arr: &amp;mut [i32], n: i32, base: i32) {
         <!-- Custom JS scripts -->
         <script src="assets/fzf.umd.js"></script>
         <script src="assets/elasticlunr.js"></script>
+        <script src="./theme/pagetoc.js"></script>
 
 
     </div>

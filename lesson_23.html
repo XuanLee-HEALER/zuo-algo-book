@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>对数器 - Zuo Algorithm Book</title>
+        <title>链表高频题和必备技巧 - Zuo Algorithm Book</title>
 
 
         <!-- Custom HTML head -->
@@ -155,17 +155,47 @@
                 <div id="content" class="content">
                     <main>
                         <div class="content-wrap">
-                            <h1 id="对数器"><a class="header" href="#对数器">对数器</a></h1>
-<p>对数器是一种验证算法的方法，它的实现步骤大概分为</p>
+                            <h1 id="链表高频题和必备技巧"><a class="header" href="#链表高频题和必备技巧">链表高频题和必备技巧</a></h1>
+<p>解决链表相关题目的注意点</p>
 <ol>
-<li>分析要解决的问题<code>A</code></li>
-<li>实现一个不考虑时间复杂度的暴力解法<code>S1</code>，最简单的思路基本都是正确的，一定要保证这里算法的正确性</li>
-<li>实现几个考虑时间复杂度的优雅解法<code>S2</code>、<code>S3</code>等</li>
-<li>开始创建测试用例，即利用随机数生成的方法生成<strong>符合题目要求的</strong>测试数据</li>
-<li>使用生成的测试数据对几个解法进行测试，小数据量测试</li>
-<li>如果小数据量没有问题，那么逐渐增加数据，直到暴力解法达到无法计算的程度，如果其它更好的解法在短时间内还可以计算出答案，则<em>基本</em>可以确定更好的解法思路是正确的</li>
-<li>如果在测试过程中出现了问题，那么减少数据量，通过打印中间变量/debug的方法，开始查找错误，这个过程中还可以打印原始测试数据，对比不同方法的结果来判断</li>
+<li>如果题目的空间要求不严格，可以使用语言标准库提供的容器解决，很容易</li>
+<li>如果题目的空间要求严格，或者面试官要求<strong>对空间使用做优化</strong>，那么需要实现空间复杂度为<code>O(1)</code>的算法</li>
+<li>最常用的技巧是<strong>快慢指针</strong></li>
+<li>链表的算法都比较简单，考察的是coding能力，尽量不使用容器讨巧实现</li>
+<li>最重要的还是<strong>多写多练</strong></li>
 </ol>
+<h2 id="返回两个无环链表的第一个相交节点"><a class="header" href="#返回两个无环链表的第一个相交节点">返回两个无环链表的第一个相交节点</a></h2>
+<p>问题描述：给定两个链表的头指针，判断两个链表是否有相交，如果相交返回第一个相交的节点</p>
+<p>解法：使用一个哈希表来保存某一个链表的所有节点的内存地址，然后遍历第二个链表，判断是否有相同内存地址的链表节点存在</p>
+<p>解法2：两个链表如果相交，在相交节点之后就只剩一条链表路径了。那么遍历两个链表到结尾的非空节点，这两个节点内存地址一定一样，否则不相交。然后计算出哪个链表更长，让那个更长的链表先走<code>(a.len()-b.len())</code>步，然后再同时遍历两个链表，得到第一个相同内存地址的节点就是答案</p>
+<h2 id="每k个节点一组翻转链表"><a class="header" href="#每k个节点一组翻转链表">每k个节点一组翻转链表</a></h2>
+<p>问题描述：对一个链表，以k个节点为一组，组内翻转链表，如果结尾剩的节点不够k个，那么留着不动</p>
+<p>解法：使用一个数组保存所有节点，组内翻转数组元素，最后制作一个新链表返回</p>
+<p>解法2：对每k个节点做链表翻转，组内原尾节点成为组内头节点，组内原头节点成为组内尾节点，并且指向下一组的头节点，最终返回头节点。第一组需要特殊处理，因为第一组原尾节点是修改后会成为整个链表的头节点，后续每个组翻转完，前一个组的尾节点需要指向当前组翻转完的头节点</p>
+<p>⚠️Rust实现分组翻转链表可以利用一个senital节点，然后翻转操作用一个可变引用实现，具体参照<a href="https://github.com/XuanLee-HEALER/zuo-algo/blob/main/examples/26-linkedlist-problems.rs">代码</a></p>
+<h2 id="复制带随机指针的链表"><a class="header" href="#复制带随机指针的链表">复制带随机指针的链表</a></h2>
+<p>问题描述：链表节点结构除了自身的值和指向下一个节点的指针以外还有一个指针，可以指向链表内的其他节点，要在不修改原链表的条件下拷贝整个链表</p>
+<p>解法：使用一个哈希表来存储原链表，每个<code>key</code>都是原链表节点的内存地址，每次存入一个节点就新建一个值相同的节点，然后遍历新节点组成的链表，查找哈希表中原始链表的节点的随机指针的值设置自己的值，最终返回新链表的头节点</p>
+<p>解法2：在原链表上每一个节点后插入一个值相同的节点，这个节点的随机指针先置空，然后遍历链表，新链表的随机指针的值等于它之前节点（原链表对应节点）的随机指针的值，这里就是利用了<strong>链表逻辑有序的特点</strong>来得到原节点的随机指针的值</p>
+<p>⚠️C语言实现中，局部变量在栈上分配空间，离开自己的作用域之后栈上的空间可能会被其他部分使用，所以需要在堆上分配内存（<code>malloc</code>）并且<strong>使用前必须初始化其中的内容</strong></p>
+<h2 id="判断链表是否为回文结构"><a class="header" href="#判断链表是否为回文结构">判断链表是否为回文结构</a></h2>
+<blockquote>
+<p>回文：从左到右和从右到左遍历结果相同，空字符串是回文</p>
+<p>快慢指针：目的是求中点</p>
+</blockquote>
+<p>问题描述：判断一个链表是否为回文</p>
+<p>解法：使用一个栈，将链表元素压入栈中，然后从头遍历链表并和栈中的元素比较，因为出栈是逆序，所以如果两个遍历结果相同即为回文</p>
+<p>解法2：使用快慢指针，得到中点，然后<strong>翻转</strong>中点后的链表，从链表的头部和尾部遍历链表，如果相同则返回。⚠️得到结果后需要把链表恢复到原始状态</p>
+<h3 id="考研常出题"><a class="header" href="#考研常出题">考研常出题</a></h3>
+<p>问题描述：将链表<code>a1-&gt;a2-&gt;a3-&gt;a4-&gt;a5-&gt;a6-&gt;a7-&gt;a8</code>改造为<code>a1-&gt;a8-&gt;a2-&gt;a7-&gt;a3-&gt;a6-&gt;a4-&gt;a5</code></p>
+<p>解法：同样可以使用快慢指针解决，在遍历翻转后的数组过程中直接重组链表结构即可</p>
+<h2 id="返回一个链表的第一个入环节点"><a class="header" href="#返回一个链表的第一个入环节点">返回一个链表的第一个入环节点</a></h2>
+<p>问题描述：给定一个链表，如果无环则返回空，否则返回第一个入环的节点</p>
+<p>解法：使用一个哈希表容器（<code>HashSet</code>结构），遍历链表，将每一个节点的内存地址存入哈希表中，直到碰到重复节点返回这个节点</p>
+<p>解法2：直接记结论，使用快慢指针遍历，第一次两个指针碰到后，慢指针继续走，快指针从链表头部以每次一个元素遍历，直到两个指针再次相遇，返回该结果。计算原理如下图</p>
+<p><img src="./image/circle-meet.png" alt="image" /></p>
+<h2 id="在链表上排序要求时间复杂度onlogn空间复杂度为o1且是稳定排序"><a class="header" href="#在链表上排序要求时间复杂度onlogn空间复杂度为o1且是稳定排序">在链表上排序，要求时间复杂度O(N*logN)，空间复杂度为O(1)，且是稳定排序</a></h2>
+<p>解法：使用归并排序，且在<code>merge</code>操作过程中不使用额外空间，可以满足要求</p>
 
                         </div>
                         <div class="sidetoc">
@@ -175,11 +205,11 @@
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="lesson_2.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="lesson_22.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="lesson_4.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="lesson_24.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -189,11 +219,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="lesson_2.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="lesson_22.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="lesson_4.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="lesson_24.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
